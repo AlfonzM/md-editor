@@ -44,10 +44,10 @@ __Notes__
 __Editor__
 - [x] Auto save on type (no need to Save/Open files)
 - [x] Open where the user left off
-- [ ] Insert Markdown menu item
+- [ ] Insert Markdown menu bar item
 - [ ] Insert image / Drag image from Finder
 - [ ] Auto scroll Preview window to where editor window cursor is
-- [ ] Toggle Show/Hide Preview window
+- [x] Toggle Show/Hide Preview window
 - [ ] Resize Preview window (draggable separator)
 - [ ] GitHub checklist markdown
 - [ ] Code editor keystrokes/shortcuts (Sublime/Atom)
@@ -55,7 +55,7 @@ __Editor__
 
 __Sidebar__
 - [x] Navigate notes in sidebar
-- [ ] Toggle show sidebar
+- [x] Toggle show sidebar
 - [ ] View notes by tags in sidebar
 
 __Format__
@@ -64,6 +64,6 @@ __Format__
 - [ ] Use syntax highlighter themes
 
 __Keyboard Shortcuts__
-- [ ] Ctrl+(Shift)+Tab to cycle notes
-- [ ] Toggle Show/Hide Preview window
-- [ ] Toggle Show/Hide sidebar
+- [x] Ctrl+(Shift)+Tab to cycle notes
+- [x] Toggle Show/Hide Preview window
+- [x] Toggle Show/Hide sidebar
