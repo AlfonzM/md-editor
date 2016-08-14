@@ -20,16 +20,16 @@ __Why though?__
 __Development__
 
 ```
-git clone https://github.com/AlfonzM/markdown-editor.git
-cd markdown-editor
+git clone https://github.com/AlfonzM/md-editor.git
+cd md-editor
 npm install
 npm start
 ```
 
-__Release__
+__Build__
 
 ```
-npm release
+npm run build
 ```
 
 ## TODO

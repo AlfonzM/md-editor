@@ -13,7 +13,8 @@
   "scripts": {
     "test": "xo",
     "start": "gulp start",
-    "build": "electron-packager . --out=dist --app-version=$npm_package_version --prune --asar --overwrite --arch=x64 --platform=darwin && open './dist/Code MD-darwin-x64/Code MD.app/'"
+    "build": "electron-packager . --out=dist --app-version=$npm_package_version --prune --asar --overwrite --arch=x64 --platform=darwin && open './dist/Code MD-darwin-x64/Code MD.app/'",
+    "buildall": "electron-packager . --out=dist --app-version=$npm_package_version --prune --asar --overwrite --all"
   },
   "files": [
     "index.js",
@@ -25,6 +26,7 @@
     "electron"
   ],
   "dependencies": {
+    "dateformat": "^1.0.12",
     "electron-debug": "^1.0.0",
     "jquery": "^3.1.0",
     "lowdb": "^0.13.1",

@@ -1,9 +1,15 @@
 // RENDERER PROCESS
+'use strict';
+
+
+const dateFormat = require('dateformat');
+const electron = require('electron');
+const shell = electron.shell;
+const ipcRenderer = electron.ipcRenderer;
 
 var uuid = require('node-uuid'),
 	$ = require('jquery'),
 	marked = require('marked'),
-	shell = require('electron').shell,
 	low = require('lowdb');
 
 // require('./js/ace/ace.js');
@@ -11,42 +17,55 @@ var uuid = require('node-uuid'),
 var db = low(__dirname + '/notesdb.json');
 var editor;
 var notes = [];
+var currentNote;
 
-var $editorTextArea, $preview;
+var $editor, $editorTextArea, $preview, $sidebar;
 
 $(document).ready(function (){
-	$editorTextarea = $("#editor-textarea");
+	$editor = $("#editor");
+	$editorTextArea = $("#editor-textarea");
 	$preview = $("#preview");
+	$sidebar = $("#sidebar");
+
+	// Hide sidebar by default
+	$sidebar.hide();
 
 	initAce();
 	initNotes();
-	initEditor();
 	setBinds();
 });
 
 function initAce() {
 	editor = ace.edit("editor-textarea");
-	editor.setTheme("ace/theme/twilight");
+	editor.setTheme("ace/theme/crimson_editor");
 	editor.session.setMode("ace/mode/markdown");
 	editor.setOptions({
 		showGutter: false,
 		fontFamily: 'Menlo',
 		showLineNumbers: false,
-		fontSize: '9pt',
+		fontSize: '10pt',
 		wrap: true,
-		showPrintMargin: false
+		cursorStyle: 'slim smooth',
+		showPrintMargin: false,
+		highlightActiveLine: false
 	});
+
+    editor.container.style.lineHeight = 1.6;
+    editor.renderer.setScrollMargin(30, 30);
+    editor.container.style.padding = '20px';
+
+    // editor.container.style.fontWeight = 300;
 
 	// Force link clicks to open in default OS browser
 	$('a').on('click', function(e){
 		e.preventDefault();
-		shell.openExternal("http:://www.google.com");
+		// shell.openExternal("http:://www.google.com");
 	});
 }
 
 function initNotes(){
 	db.defaults({'notes': []}).value()
-	var notes = db.get('notes').value()
+	notes = db.get('notes').value()
 
 	if(notes.length === 0){
 		db.get('notes').push({'id': uuid.v4(), 'body':'# New Note qwjeqwjlkeqwlk', 'updated_at': new Date().getTime()}).value()
@@ -61,14 +80,12 @@ function initNotes(){
 
 	// select the first note
 	selectANoteFromNoteList($('#note-list ul li:first'))
-
-	console.log(notes)
 }
 
 function setBinds() {
 	// Input code editor change handler
-	$editorTextarea.bind('input propertychange', function(){
-		// saveNote();
+	editor.on('change', function(){
+		saveNote();
 		refreshOutput();
 	});
 
@@ -85,17 +102,38 @@ function setBinds() {
 
 
 // EDITOR ---------------------
-function initEditor() {
+function refreshOutput(){
+	var editorText = editor.getValue();
 
+	$('#note-list ul li.active h1').html(getNoteTitleOfNoteBody(editorText));
+	$preview.html(marked(editorText));
 }
 
-function refreshOutput(){
-	$preview.html(marked(editor.getValue()));
+function saveNote(){
+	currentNote.body = editor.getValue()
+	db.get('notes').find({id:currentNote.id}).assign({
+		body: currentNote.body,
+		updated_at: new Date().getTime()
+	}).value()
+}
+
+function getNoteTitleOfNoteBody(noteBody) {
+	// remove html tags and markdown symbols
+	var splitted = noteBody.replace(/(<([^>]+)>)/ig, '').split('\n');
+
+	return splitted[0].replace(/^[^a-zA-Z0-9]*|[^a-zA-Z0-9]*$/g, '');
+	// noteSubtitle = splitted[1].replace(/^[^a-zA-Z0-9]*|[^a-zA-Z0-9]*$/g, '');
+
+	// get first and second non-blank text
+	// console.log(noteTitle + ' / ' + noteSubtitle);
 }
 
 // NOTES LIST -----------------
 function selectANoteFromNoteList($noteElement) {
 	var id = $noteElement.attr('id')
+
+	console.log(id)
+	console.log(notes)
 
 	var note = notes.find(function (o){
 		{ return o.id == id }
@@ -104,9 +142,65 @@ function selectANoteFromNoteList($noteElement) {
 	$('.active').removeClass('active')
 	$noteElement.addClass('active')
 
-	// displayNote(note)
+	displayNoteToEditor(note)
+}
+
+function displayNoteToEditor(note){
+	currentNote = note;
+	editor.setValue(note.body, -1);
+	refreshOutput();
 }
 
 function addNoteToNoteList(note) {
-	$('#note-list ul').prepend('<li id=' + note.id + '><h1>' + note.body.substr(0,15) + '...</h1><span>' + note.updated_at + '</span></li>');
+	$('#note-list ul').prepend('\
+		<li id=' + note.id + '>\
+			<h1>' + getNoteTitleOfNoteBody(note.body) + '</h1>\
+			<span>' + dateFormat(note.updated_at, 'shortDate') + '</span>\
+		</li>');
 }
+
+function showNextNote(){
+	var $next = $('#note-list ul li.active').next();
+	selectANoteFromNoteList(($next.length != 0) ? $next : $('#note-list ul li:first'));
+}
+
+function showPreviousNote(){
+	var $prev = $('#note-list ul li.active').prev();
+	selectANoteFromNoteList(($prev.length != 0) ? $prev : $('#note-list ul li:last'));
+}
+
+
+// IPC LISTENERS ---------------
+
+ipcRenderer.on('getEditorContents', function(event){
+	ipcRenderer.send('saveFile', $editorTextarea.val())
+});
+
+ipcRenderer.on('loadEditorContents', function(event, data){
+	$editorTextarea.val(data)
+	refreshOutput()
+});
+
+ipcRenderer.on('togglePreview', function(event){
+	$preview.toggle()
+	editor.resize(true)
+	// $output.remove()
+});
+
+ipcRenderer.on('toggleSidebar', function(event){
+	$sidebar.toggle()
+	editor.resize(true)
+});
+
+ipcRenderer.on('toggleEditor', function(event){
+	$editor.toggle()
+	editor.resize(true)
+});
+
+ipcRenderer.on('nextNote', function(event){
+	showNextNote()
+});
+
+ipcRenderer.on('previousNote', function(event){
+	showPreviousNote()
+});

@@ -584,7 +584,7 @@ body {
   display: flex;
   width: 100%;
   height: 100%; }
-  .container #preview, .container #note-list {
+  .container #editor, .container #preview, .container #note-list {
     box-sizing: border-box;
     overflow: scroll; }
   .container #editor, .container #preview {
@@ -592,12 +592,19 @@ body {
     display: inline; }
   .container #editor {
     position: relative; }
+    .container #editor #controls {
+      position: absolute;
+      z-index: 1000;
+      background-color: white;
+      width: 100%;
+      color: #b3b3b3;
+      font-size: 8pt;
+      padding: 10px; }
     .container #editor #editor-textarea {
-      margin: 0;
       position: absolute;
       left: 0;
-      bottom: 0;
       right: 0;
+      bottom: 0;
       top: 0; }
   .container #sidebar {
     flex: 0 0 200px;
@@ -609,30 +616,33 @@ body {
   .container .markdown-body {
     box-sizing: border-box;
     min-width: 200px;
-    max-width: 980px;
-    margin: 0 auto;
     padding: 20px; }
   .container #note-list {
-    flex: 0 0 250px;
-    background-color: #f2f2f2; }
+    flex: 0 0 220px;
+    background-color: rgba(0, 0, 0, 0.02); }
     .container #note-list ul {
       margin: 0;
       padding: 0; }
     .container #note-list ul li {
-      padding: 15px;
+      padding: 10px 15px;
       list-style: none;
       font-size: 9pt; }
       .container #note-list ul li:hover {
+        background-color: rgba(0, 0, 0, 0.08);
         cursor: default; }
       .container #note-list ul li.active {
         background-color: #98DDDE;
         color: white; }
       .container #note-list ul li h1 {
         opacity: 1;
-        font-size: 11pt;
+        font-size: 10pt;
         font-weight: 500;
         margin: 0;
-        padding-bottom: 4px; }
+        padding-bottom: 3px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
       .container #note-list ul li span {
         opacity: 0.7; }
       .container #note-list ul li p {
