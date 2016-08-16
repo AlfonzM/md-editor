@@ -2,8 +2,9 @@
 
 $brand-color: #98DDDE;
 $text-color: #222222;
-$gray-color: gray;
+$gray-color: #555555;
 $light-gray-color: lighten($gray-color, 20%);
+$lighter-gray-color: lighten($light-gray-color, 20%);
 
 html, body {
 	width: 100%;
@@ -15,6 +16,11 @@ html, body {
 body {
 	display: flex;
 	font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif;
+
+	button.btn {
+		outline: none;
+		border: none;
+	}
 }
 
 .container{
@@ -76,25 +82,54 @@ body {
 
 	#note-list {
 		// padding-top: 23px;
+		position: relative;
 
 		flex: 0 0 220px;
 		background-color: rgba(0,0,0,0.02);
 
+		display: flex;
+		flex-direction: column;
+
+		button#btn-create-note {
+			// position: absolute;
+			// bottom: 0;
+			// left: 0;
+			// right: 0;
+			// width: 100%;
+			background: white;
+			padding: 20px;
+			font-size: 10pt;
+			color: $lighter-gray-color;
+		}
+
 		ul {
 			margin: 0;
 			padding: 0;
+			overflow-y: scroll;
+
 		}
 
 		ul li {
 			padding: 10px 15px;
 			list-style: none;
 			font-size: 9pt;
+			box-sizing: border-box;
+			height: 54px;
+			position: relative;
 			// border-bottom: 1px solid #ddd;
 			// transition: background-color 0.2s;
 
 			&:hover {
 				background-color: rgba(0,0,0,0.08);
 				cursor: default;
+
+				button.btn-delete-note {
+					display: block;
+
+					&:hover {
+						color: rgba(0,0,0,0.4);
+					}
+				}
 			}
 
 			&.active {
@@ -102,6 +137,7 @@ body {
 				color: white;
 			}
 
+			// Note title
 			h1 {
 				opacity: 1;
 				font-size: 10pt;
@@ -109,15 +145,29 @@ body {
 				margin: 0;
 				padding-bottom: 3px;
 
-				width: 100%;
+				width: 89%;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
+			// Note timestamp
 			span {
 				opacity: 0.7;
 			}
+
+			// Note list note delete button
+			button.btn-delete-note {
+				display: none;
+				background: none;
+				position: absolute;
+				top: 0;
+				top: 17px;
+				right: 10px;
+				font-size: 10pt;
+				color: rgba(0,0,0,0.2);
+			}
+
 
 			p {
 				line-height: 1.4em;

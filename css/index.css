@@ -579,6 +579,9 @@ html, body {
 body {
   display: flex;
   font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif; }
+  body button.btn {
+    outline: none;
+    border: none; }
 
 .container {
   display: flex;
@@ -597,7 +600,7 @@ body {
       z-index: 1000;
       background-color: white;
       width: 100%;
-      color: #b3b3b3;
+      color: #888888;
       font-size: 8pt;
       padding: 10px; }
     .container #editor #editor-textarea {
@@ -618,18 +621,34 @@ body {
     min-width: 200px;
     padding: 20px; }
   .container #note-list {
+    position: relative;
     flex: 0 0 220px;
-    background-color: rgba(0, 0, 0, 0.02); }
+    background-color: rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column; }
+    .container #note-list button#btn-create-note {
+      background: white;
+      padding: 20px;
+      font-size: 10pt;
+      color: #bbbbbb; }
     .container #note-list ul {
       margin: 0;
-      padding: 0; }
+      padding: 0;
+      overflow-y: scroll; }
     .container #note-list ul li {
       padding: 10px 15px;
       list-style: none;
-      font-size: 9pt; }
+      font-size: 9pt;
+      box-sizing: border-box;
+      height: 54px;
+      position: relative; }
       .container #note-list ul li:hover {
         background-color: rgba(0, 0, 0, 0.08);
         cursor: default; }
+        .container #note-list ul li:hover button.btn-delete-note {
+          display: block; }
+          .container #note-list ul li:hover button.btn-delete-note:hover {
+            color: rgba(0, 0, 0, 0.4); }
       .container #note-list ul li.active {
         background-color: #98DDDE;
         color: white; }
@@ -639,12 +658,21 @@ body {
         font-weight: 500;
         margin: 0;
         padding-bottom: 3px;
-        width: 100%;
+        width: 89%;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis; }
       .container #note-list ul li span {
         opacity: 0.7; }
+      .container #note-list ul li button.btn-delete-note {
+        display: none;
+        background: none;
+        position: absolute;
+        top: 0;
+        top: 17px;
+        right: 10px;
+        font-size: 10pt;
+        color: rgba(0, 0, 0, 0.2); }
       .container #note-list ul li p {
         line-height: 1.4em;
         margin: 0;

@@ -32,6 +32,7 @@ $(document).ready(function (){
 
 	initAce();
 	initNotes();
+	initNoteList();
 	setBinds();
 });
 
@@ -64,6 +65,7 @@ function initAce() {
 }
 
 function initNotes(){
+	// fetch the notes from db
 	db.defaults({'notes': []}).value()
 	notes = db.get('notes').value()
 
@@ -72,7 +74,9 @@ function initNotes(){
 		db.get('notes').push({'id': uuid.v4(), 'body':'# hello!\n\nomg this is really awesome', 'updated_at': new Date().getTime()}).value()
 		db.get('notes').push({'id': uuid.v4(), 'body':'aw yiss', 'updated_at': new Date().getTime()}).value()
 	}
+}
 
+function initNoteList() {
 	// add the loaded notes to note list
 	notes.map(function(note){
 		addNoteToNoteList(note);
@@ -95,13 +99,24 @@ function setBinds() {
 	});
 
 	// Select note from note list
-	$('#note-list ul li').on('click', function(e){
+	$('#note-list ul').on('click', 'li', function(e){
 		selectANoteFromNoteList($(this))
-	})
+	});
+
+	// on click delete note button
+	$('#note-list ul').on('click', 'li button.btn-delete-note', function() {
+		deleteNote($(this).parent());
+	});
+
+	// on click create note button
+	$('button#btn-create-note').on('click', function(){
+		createNewNote();
+	});
 }
 
 
 // EDITOR ---------------------
+
 function refreshOutput(){
 	var editorText = editor.getValue();
 
@@ -121,7 +136,7 @@ function getNoteTitleOfNoteBody(noteBody) {
 	// remove html tags and markdown symbols
 	var splitted = noteBody.replace(/(<([^>]+)>)/ig, '').split('\n');
 
-	return splitted[0].replace(/^[^a-zA-Z0-9]*|[^a-zA-Z0-9]*$/g, '');
+	return splitted[0].replace(/^[^a-zA-Z0-9]*|[^a-zA-Z0-9]*$/g, '') || 'Untitled note';
 	// noteSubtitle = splitted[1].replace(/^[^a-zA-Z0-9]*|[^a-zA-Z0-9]*$/g, '');
 
 	// get first and second non-blank text
@@ -156,6 +171,7 @@ function addNoteToNoteList(note) {
 		<li id=' + note.id + '>\
 			<h1>' + getNoteTitleOfNoteBody(note.body) + '</h1>\
 			<span>' + dateFormat(note.updated_at, 'shortDate') + '</span>\
+			<button class="btn btn-delete-note"><i class="icon ion-close-round"></i></button>\
 		</li>');
 }
 
@@ -167,6 +183,20 @@ function showNextNote(){
 function showPreviousNote(){
 	var $prev = $('#note-list ul li.active').prev();
 	selectANoteFromNoteList(($prev.length != 0) ? $prev : $('#note-list ul li:last'));
+}
+
+function createNewNote(){
+	var newNote = {'id': uuid.v4(), 'body':'', 'updated_at': new Date().getTime()}
+	db.get('notes').push(newNote).value()
+
+	addNoteToNoteList(newNote)
+	selectANoteFromNoteList($('#note-list ul li:first'))
+}
+
+function deleteNote($noteElement){
+	showNextNote()
+	db.get('notes').remove({'id': $noteElement.attr('id')}).value()
+	$noteElement.remove();
 }
 
 

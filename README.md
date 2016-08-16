@@ -1,19 +1,9 @@
-Markdown Editor
+MD Editor
 ===============
 
-## Overview
+Programming-centric note-taking app made in Electron.
 
-__What's this?__
-
-A Markdown editor app made with Electron.
-
-__You mean _another_ Markdown edtior app made with Electron?__
-
-...yes.
-
-__Why though?__
-
-¯\\\_(ツ)_/¯
+Basically like a macOS Notes app but with Markdown support and has a IDE-ish text editor.
 
 ## Installation
 
@@ -53,9 +43,10 @@ __Editor__
 - [ ] Code editor keystrokes/shortcuts (Sublime/Atom)
 - [ ] Copy to clipboard button on code snippets
 
-__Sidebar__
+__Sidebars__
 - [x] Navigate notes in sidebar
 - [x] Toggle show sidebar
+- [ ] Sort notes list by date updated
 - [ ] View notes by tags in sidebar
 
 __Format__
