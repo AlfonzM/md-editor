@@ -24,9 +24,13 @@ npm run build
 
 ## TODO
 
+__General__
+- [ ] Preferences window/page
+- [ ] Search notes
+
 __Notes__
-- [ ] New note
-- [ ] Delete note
+- [x] New note
+- [x] Delete note
 - [ ] Open file and add to list (import)
 - [ ] Save As file (export)
 - [ ] Add tags to notes
@@ -46,7 +50,7 @@ __Editor__
 __Sidebars__
 - [x] Navigate notes in sidebar
 - [x] Toggle show sidebar
-- [ ] Sort notes list by date updated
+- [ ] Sort notes list
 - [ ] View notes by tags in sidebar
 
 __Format__
@@ -58,3 +62,7 @@ __Keyboard Shortcuts__
 - [x] Ctrl+(Shift)+Tab to cycle notes
 - [x] Toggle Show/Hide Preview window
 - [x] Toggle Show/Hide sidebar
+- [ ] Create/Delete note
+- [ ] Edit current line/selected text format (e.g. change to Heading 1)
+- [ ] Zoom in/Out
+- [ ] Open Preferences window

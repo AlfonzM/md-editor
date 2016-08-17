@@ -17,6 +17,10 @@ body {
 	display: flex;
 	font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif;
 
+	input[type="text"] {
+		outline: none;
+	}
+
 	button.btn {
 		outline: none;
 		border: none;
@@ -89,6 +93,18 @@ body {
 
 		display: flex;
 		flex-direction: column;
+
+		#search-note {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			background: none;
+			border: none;
+			border-top: 1px solid rgba(0,0,0,0.1);
+			padding: 6px;
+			font-size: 8pt;
+			color: $light-gray-color;
+		}
 
 		button#btn-create-note {
 			// position: absolute;

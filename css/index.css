@@ -5,11 +5,10 @@
 .markdown-body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  line-height: 1.5;
   color: #333;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1;
   word-wrap: break-word; }
 
 .markdown-body .pl-c {
@@ -579,6 +578,8 @@ html, body {
 body {
   display: flex;
   font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif; }
+  body input[type="text"] {
+    outline: none; }
   body button.btn {
     outline: none;
     border: none; }
@@ -626,6 +627,16 @@ body {
     background-color: rgba(0, 0, 0, 0.02);
     display: flex;
     flex-direction: column; }
+    .container #note-list #search-note {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: none;
+      border: none;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 6px;
+      font-size: 8pt;
+      color: #888888; }
     .container #note-list button#btn-create-note {
       background: white;
       padding: 20px;

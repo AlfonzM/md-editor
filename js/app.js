@@ -33,6 +33,7 @@ $(document).ready(function (){
 	initAce();
 	initNotes();
 	initNoteList();
+	initSearchbox();
 	setBinds();
 });
 
@@ -44,14 +45,16 @@ function initAce() {
 		showGutter: false,
 		fontFamily: 'Menlo',
 		showLineNumbers: false,
-		fontSize: '10pt',
+		fontSize: '9pt',
 		wrap: true,
 		cursorStyle: 'slim smooth',
 		showPrintMargin: false,
 		highlightActiveLine: false
 	});
 
-    editor.container.style.lineHeight = 1.6;
+	editor.$blockScrolling = Infinity;
+
+    editor.container.style.lineHeight = 1.4;
     editor.renderer.setScrollMargin(30, 30);
     editor.container.style.padding = '20px';
 
@@ -77,6 +80,9 @@ function initNotes(){
 }
 
 function initNoteList() {
+	console.log("init");
+	$('#note-list ul').html('');
+
 	// add the loaded notes to note list
 	notes.map(function(note){
 		addNoteToNoteList(note);
@@ -84,6 +90,20 @@ function initNoteList() {
 
 	// select the first note
 	selectANoteFromNoteList($('#note-list ul li:first'))
+}
+
+function initSearchbox() {
+	$('#search-note').on('change paste keyup', function(){
+		search($(this).val());
+	});
+}
+
+function search(searchTerm){
+	notes = db.get('notes').value().filter(function(el){
+		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+	});
+
+	initNoteList();
 }
 
 function setBinds() {
@@ -98,14 +118,15 @@ function setBinds() {
 		$('#note-list').animate({"margin-left":"-=250"}, 200, 'swing');
 	});
 
+	// on click delete note button
+	$('#note-list ul').on('click', 'li button.btn-delete-note', function(e) {
+		e.stopPropagation();
+		deleteNote($(this).parent());
+	});
+
 	// Select note from note list
 	$('#note-list ul').on('click', 'li', function(e){
 		selectANoteFromNoteList($(this))
-	});
-
-	// on click delete note button
-	$('#note-list ul').on('click', 'li button.btn-delete-note', function() {
-		deleteNote($(this).parent());
 	});
 
 	// on click create note button
@@ -113,7 +134,6 @@ function setBinds() {
 		createNewNote();
 	});
 }
-
 
 // EDITOR ---------------------
 
@@ -145,14 +165,17 @@ function getNoteTitleOfNoteBody(noteBody) {
 
 // NOTES LIST -----------------
 function selectANoteFromNoteList($noteElement) {
+	console.log($noteElement);
 	var id = $noteElement.attr('id')
 
-	console.log(id)
+	console.log("ID " + id)
 	console.log(notes)
 
 	var note = notes.find(function (o){
 		{ return o.id == id }
 	})
+
+	console.log(note)
 
 	$('.active').removeClass('active')
 	$noteElement.addClass('active')
@@ -194,7 +217,10 @@ function createNewNote(){
 }
 
 function deleteNote($noteElement){
-	showNextNote()
+	if($noteElement.hasClass('active')) {
+		showNextNote()
+	}
+	
 	db.get('notes').remove({'id': $noteElement.attr('id')}).value()
 	$noteElement.remove();
 }
