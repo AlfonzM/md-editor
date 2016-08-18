@@ -39,7 +39,7 @@ $(document).ready(function (){
 
 function initAce() {
 	editor = ace.edit("editor-textarea");
-	editor.setTheme("ace/theme/crimson_editor");
+	editor.setTheme("ace/theme/github");
 	editor.session.setMode("ace/mode/markdown");
 	editor.setOptions({
 		showGutter: false,
@@ -55,8 +55,9 @@ function initAce() {
 	editor.$blockScrolling = Infinity;
 
     editor.container.style.lineHeight = 1.4;
-    editor.renderer.setScrollMargin(30, 30);
-    editor.container.style.padding = '20px';
+
+    // editor.renderer.setScrollMargin(30, 30);
+    // editor.container.style.padding = '20px';
 
     // editor.container.style.fontWeight = 300;
 
@@ -102,6 +103,10 @@ function search(searchTerm){
 	notes = db.get('notes').value().filter(function(el){
 		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
 	});
+
+	// 
+	console.log("search results:")
+	console.log(notes)
 
 	initNoteList();
 }
@@ -165,22 +170,26 @@ function getNoteTitleOfNoteBody(noteBody) {
 
 // NOTES LIST -----------------
 function selectANoteFromNoteList($noteElement) {
-	console.log($noteElement);
 	var id = $noteElement.attr('id')
 
-	console.log("ID " + id)
-	console.log(notes)
+	console.log("SELECTED NOTE ID: " + id)
 
 	var note = notes.find(function (o){
 		{ return o.id == id }
 	})
 
+	console.log("THE SELECTED NOTE")
 	console.log(note)
 
 	$('.active').removeClass('active')
 	$noteElement.addClass('active')
 
 	displayNoteToEditor(note)
+
+	// if(offset + 54 + 20 > window.innerHeight){
+	// 	$('#note-list ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
+	// }
+
 }
 
 function displayNoteToEditor(note){
@@ -210,26 +219,37 @@ function showPreviousNote(){
 
 function createNewNote(){
 	var newNote = {'id': uuid.v4(), 'body':'', 'updated_at': new Date().getTime()}
-	db.get('notes').push(newNote).value()
+	console.log("create new note:")
+	console.log(newNote)
+	notes = db.get('notes').push(newNote).value()
 
 	addNoteToNoteList(newNote)
 	selectANoteFromNoteList($('#note-list ul li:first'))
 }
 
 function deleteNote($noteElement){
-	if($noteElement.hasClass('active')) {
-		showNextNote()
-	}
-	
 	db.get('notes').remove({'id': $noteElement.attr('id')}).value()
-	$noteElement.remove();
+
+	$noteElement.animate({
+	    height: '0',
+		margin: 0,
+		padding: 0,
+		marginLeft: '-250px',
+		// marginLeft: '-' + $(this).width() + 'px',
+	}, 200, 'swing', function() {
+		if($noteElement.hasClass('active')) {
+			showNextNote()
+		}
+		
+		// $(this).remove();
+	});
 }
 
 
 // IPC LISTENERS ---------------
 
 ipcRenderer.on('getEditorContents', function(event){
-	ipcRenderer.send('saveFile', $editorTextarea.val())
+	ipcRenderer.send('saveFile', editor.getValue())
 });
 
 ipcRenderer.on('loadEditorContents', function(event, data){
@@ -259,4 +279,12 @@ ipcRenderer.on('nextNote', function(event){
 
 ipcRenderer.on('previousNote', function(event){
 	showPreviousNote()
+});
+
+ipcRenderer.on('focusSearchBox', function(event){
+	$("input#search-note").focus()
+});
+
+ipcRenderer.on('createNewNote', function(event){
+	createNewNote()
 });

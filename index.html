@@ -5,6 +5,7 @@
 		<title>Electron boilerplate</title>
 		<link rel="stylesheet" href="css/index.css">
 		<link rel="stylesheet" href="css/ionicons.min.css">
+		<link rel="stylesheet" href="css/font-awesome-4.6.3/css/font-awesome.min.css">
 	</head>
 	<body>
 		<div class="container">
@@ -13,13 +14,15 @@
 				<a href="google.com">test</a>
 			</aside>
 			<nav id="note-list">
-				<button id="btn-create-note" class="btn"><i class="icon ion-plus-round"></i> New note</button>
+				<!-- <button id="btn-create-note" class="btn"><i class="icon ion-plus-round"></i> New note</button> -->
+				<span id="note-list-label">All notes</span>
 				<ul></ul>
 				<input type="text" id="search-note" placeholder="Search" />
 			</nav>
 			<main id="editor">
 				<!-- <div id="controls">tools</div> -->
-				<pre id="editor-textarea">code</pre>
+				<pre id="editor-textarea"></pre>
+				<div id="tags-editor">tags</div>
 			</main>
 			<section id="preview" class="markdown-body">
 				Preview

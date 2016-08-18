@@ -595,7 +595,9 @@ body {
     flex: 1;
     display: inline; }
   .container #editor {
-    position: relative; }
+    position: relative;
+    display: flex;
+    flex-direction: column; }
     .container #editor #controls {
       position: absolute;
       z-index: 1000;
@@ -605,11 +607,12 @@ body {
       font-size: 8pt;
       padding: 10px; }
     .container #editor #editor-textarea {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      top: 0; }
+      flex: 1;
+      margin: 0; }
+    .container #editor #tags-editor {
+      background-color: white;
+      padding: 10px;
+      font-size: 9pt; }
   .container #sidebar {
     flex: 0 0 200px;
     background-color: #ddd; }
@@ -628,24 +631,39 @@ body {
     display: flex;
     flex-direction: column; }
     .container #note-list #search-note {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
+      height: 30px;
       background: none;
       border: none;
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 6px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 4px;
+      padding: 8px;
       font-size: 8pt;
-      color: #888888; }
+      box-sizing: border-box;
+      color: #888888;
+      transition: text-align 0.2s; }
+      .container #note-list #search-note::-webkit-input-placeholder {
+        text-align: center; }
+      .container #note-list #search-note:focus::-webkit-input-placeholder {
+        text-align: left; }
+    .container #note-list span#note-list-label {
+      padding: 15px;
+      padding-bottom: 10px;
+      margin-top: 1.5em;
+      font-size: 8pt;
+      text-transform: uppercase;
+      font-weight: 400;
+      color: #888888;
+      letter-spacing: 1px; }
     .container #note-list button#btn-create-note {
       background: white;
       padding: 20px;
-      font-size: 10pt;
+      font-size: 12pt;
       color: #bbbbbb; }
     .container #note-list ul {
       margin: 0;
       padding: 0;
-      overflow-y: scroll; }
+      overflow-y: scroll;
+      flex: 1; }
     .container #note-list ul li {
       padding: 10px 15px;
       list-style: none;
@@ -654,12 +672,14 @@ body {
       height: 54px;
       position: relative; }
       .container #note-list ul li:hover {
-        background-color: rgba(0, 0, 0, 0.08);
+        transition: background-color 0.15s;
+        background-color: rgba(0, 0, 0, 0.07);
         cursor: default; }
         .container #note-list ul li:hover button.btn-delete-note {
           display: block; }
           .container #note-list ul li:hover button.btn-delete-note:hover {
-            color: rgba(0, 0, 0, 0.4); }
+            color: rgba(0, 0, 0, 0.4);
+            cursor: pointer; }
       .container #note-list ul li.active {
         background-color: #98DDDE;
         color: white; }

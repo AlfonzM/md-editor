@@ -34,6 +34,7 @@ __Notes__
 - [ ] Open file and add to list (import)
 - [ ] Save As file (export)
 - [ ] Add tags to notes
+- [ ] Select multiple notes in notelist (for deleting)
 
 __Editor__
 - [x] Auto save on type (no need to Save/Open files)
@@ -62,7 +63,9 @@ __Keyboard Shortcuts__
 - [x] Ctrl+(Shift)+Tab to cycle notes
 - [x] Toggle Show/Hide Preview window
 - [x] Toggle Show/Hide sidebar
-- [ ] Create/Delete note
+- [ ] Create note
+- [ ] Delete note
 - [ ] Edit current line/selected text format (e.g. change to Heading 1)
 - [ ] Zoom in/Out
 - [ ] Open Preferences window
+- [x] Cmd+Opt+F search notes
