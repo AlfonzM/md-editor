@@ -35,6 +35,7 @@ __Notes__
 - [ ] Save As file (export)
 - [ ] Add tags to notes
 - [ ] Select multiple notes in notelist (for deleting)
+- [ ] Show "No note selected, create a new note" if notes list is empty
 
 __Editor__
 - [x] Auto save on type (no need to Save/Open files)
@@ -65,7 +66,7 @@ __Keyboard Shortcuts__
 - [x] Toggle Show/Hide sidebar
 - [ ] Create note
 - [ ] Delete note
-- [ ] Edit current line/selected text format (e.g. change to Heading 1)
+- [ ] Insert/Edit current line to text format (e.g. change line to Heading 1, insert italic text etc)
 - [ ] Zoom in/Out
 - [ ] Open Preferences window
 - [x] Cmd+Opt+F search notes
