@@ -73,7 +73,7 @@ body {
 		#tags-editor {
 			$tag-bg-color: transparentize($brand-color, 0.8);
 			$tag-bg-color-hover: transparentize($brand-color, 0.6);
-			$tag-color: transparentize(darken($brand-color, 30%), 0.4);
+			$tag-color: transparentize(darken($brand-color, 40%), 0.5);
 
 			background: none;
 			padding: 10px;

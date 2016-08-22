@@ -36,8 +36,7 @@ $(document).ready(function (){
 	initNoteList();
 	initSearchbox();
 	setBinds();
-
-	initTags();
+	// initTags();
 });
 
 function initAce() {
@@ -76,10 +75,11 @@ function initNotes(){
 	db.defaults({'notes': []}).value()
 	notes = db.get('notes').value()
 
+	// Seed dummy notes
 	if(notes.length === 0){
-		db.get('notes').push({'id': uuid.v4(), 'body':'# New Note qwjeqwjlkeqwlk', 'updated_at': new Date().getTime()}).value()
-		db.get('notes').push({'id': uuid.v4(), 'body':'# hello!\n\nomg this is really awesome', 'updated_at': new Date().getTime()}).value()
-		db.get('notes').push({'id': uuid.v4(), 'body':'aw yiss', 'updated_at': new Date().getTime()}).value()
+		db.get('notes').push({'id': uuid.v4(), 'body':'# New Note qwjeqwjlkeqwlk', 'tags':['code','php'], 'updated_at': new Date().getTime()}).value()
+		db.get('notes').push({'id': uuid.v4(), 'body':'# hello!\n\nomg this is really awesome', 'tags':['code','electron'], 'updated_at': new Date().getTime()}).value()
+		db.get('notes').push({'id': uuid.v4(), 'body':'aw yiss', 'tags':['code','omg'], 'updated_at': new Date().getTime()}).value()
 	}
 }
 
@@ -143,7 +143,9 @@ function setBinds() {
 	});
 }
 
-function initTags(){
+function initTags(tags){
+	$('#tags-editor').html('<input id="tags" name="hashtags" type="tags" placeholder="Add a tag" value=' + tags.join() + '>');
+
 	[].forEach.call($('input[type="tags"]'), tagsInput);
 
 	let $tags = $('#tags')[0];
@@ -189,6 +191,15 @@ function inputTags(e){
 
 function changeTags(e){
 	$('span.tag').bind('click', selectTag);
+
+	if(!this) {
+		return;
+	}
+
+	db.get('notes').find({id:currentNote.id}).assign({
+		tags: this.value.split(','),
+		updated_at: new Date().getTime()
+	}).value()
 }
 
 function selectTag(e){
@@ -221,8 +232,16 @@ function selectANoteFromNoteList($noteElement) {
 }
 
 function displayNoteToEditor(note){
+
 	currentNote = note;
+
+	// Set note body to editor textarea
 	editor.setValue(note.body, -1);
+
+	// Set tags
+	initTags(note.tags);
+	// [].forEach.call($('input[type="tags"]'), tagsInput);
+
 	refreshOutput();
 }
 

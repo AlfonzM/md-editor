@@ -627,7 +627,7 @@ body {
       .container #editor #tags-editor .tags-input span.tag {
         border-radius: 8px;
         background-color: rgba(152, 221, 222, 0.2);
-        color: rgba(54, 166, 167, 0.6);
+        color: rgba(41, 128, 129, 0.5);
         margin-right: 4px;
         cursor: pointer;
         transition: background-color 0.1s, border-color 0.1s; }
