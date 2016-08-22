@@ -6,6 +6,7 @@ const dateFormat = require('dateformat');
 const electron = require('electron');
 const shell = electron.shell;
 const ipcRenderer = electron.ipcRenderer;
+const tagsInput = require('tags-input');
 
 var uuid = require('node-uuid'),
 	$ = require('jquery'),
@@ -35,6 +36,8 @@ $(document).ready(function (){
 	initNoteList();
 	initSearchbox();
 	setBinds();
+
+	initTags();
 });
 
 function initAce() {
@@ -140,6 +143,16 @@ function setBinds() {
 	});
 }
 
+function initTags(){
+	[].forEach.call($('input[type="tags"]'), tagsInput);
+
+	let $tags = $('#tags')[0];
+	$tags.addEventListener('input', inputTags);
+	$tags.addEventListener('change', changeTags);
+
+	changeTags();
+}
+
 // EDITOR ---------------------
 
 function refreshOutput(){
@@ -166,6 +179,21 @@ function getNoteTitleOfNoteBody(noteBody) {
 
 	// get first and second non-blank text
 	// console.log(noteTitle + ' / ' + noteSubtitle);
+}
+
+// TAGS ---------------------
+
+function inputTags(e){
+	console.log('input ' + this.value);
+}
+
+function changeTags(e){
+	$('span.tag').bind('click', selectTag);
+}
+
+function selectTag(e){
+	// TODO
+	console.log('SELECT TAG: ' + $(e.target).text());
 }
 
 // NOTES LIST -----------------
