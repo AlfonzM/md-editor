@@ -18,7 +18,7 @@ body {
 	display: flex;
 	font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif;
 
-	input[type="text"] {
+	input[type="text"], input[type="search"] {
 		outline: none;
 	}
 
@@ -72,8 +72,8 @@ body {
 
 		#tags-editor {
 			$tag-bg-color: transparentize($brand-color, 0.8);
-			$tag-bg-color-hover: transparentize($brand-color, 0.6);
-			$tag-color: transparentize(darken($brand-color, 40%), 0.5);
+			$tag-bg-color-hover: transparentize($brand-color, 0.5);
+			$tag-color: transparentize(darken($brand-color, 50%), 0.5);
 
 			background: none;
 			padding: 10px;
@@ -159,11 +159,11 @@ body {
 			border-top: 1px solid rgba(0,0,0,0.12);
 			border-radius: 4px;
 			padding: 8px;
-			font-size: 8pt;
+			font-size: 9pt;
 			box-sizing: border-box;
 			color: $light-gray-color;
 
-			transition: text-align 0.2s;
+			transition: text-align 1s;
 
 			&::-webkit-input-placeholder { 
 				text-align:center;

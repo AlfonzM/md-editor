@@ -578,7 +578,7 @@ html, body {
 body {
   display: flex;
   font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif; }
-  body input[type="text"] {
+  body input[type="text"], body input[type="search"] {
     outline: none; }
   body button.btn {
     outline: none;
@@ -627,15 +627,15 @@ body {
       .container #editor #tags-editor .tags-input span.tag {
         border-radius: 8px;
         background-color: rgba(152, 221, 222, 0.2);
-        color: rgba(41, 128, 129, 0.5);
+        color: rgba(29, 89, 90, 0.5);
         margin-right: 4px;
         cursor: pointer;
         transition: background-color 0.1s, border-color 0.1s; }
         .container #editor #tags-editor .tags-input span.tag:hover, .container #editor #tags-editor .tags-input span.tag.selected {
-          background-color: rgba(152, 221, 222, 0.4);
-          border-color: rgba(152, 221, 222, 0.4); }
+          background-color: rgba(152, 221, 222, 0.5);
+          border-color: rgba(152, 221, 222, 0.5); }
         .container #editor #tags-editor .tags-input span.tag.selected {
-          border-color: rgba(133, 215, 216, 0.4); }
+          border-color: rgba(133, 215, 216, 0.5); }
   .container #sidebar {
     flex: 0 0 200px;
     background-color: #ddd; }
@@ -660,10 +660,10 @@ body {
       border-top: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 4px;
       padding: 8px;
-      font-size: 8pt;
+      font-size: 9pt;
       box-sizing: border-box;
       color: #888888;
-      transition: text-align 0.2s; }
+      transition: text-align 1s; }
       .container #note-list #search-note::-webkit-input-placeholder {
         text-align: center; }
       .container #note-list #search-note:focus::-webkit-input-placeholder {

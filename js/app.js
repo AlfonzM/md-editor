@@ -73,39 +73,51 @@ function initAce() {
 function initNotes(){
 	// fetch the notes from db
 	db.defaults({'notes': []}).value()
-	notes = db.get('notes').value()
+	notes = db.get('notes').filter({ 'deleted': 0}).value()
+
+	console.log(notes);
 
 	// Seed dummy notes
 	if(notes.length === 0){
-		db.get('notes').push({'id': uuid.v4(), 'body':'# New Note qwjeqwjlkeqwlk', 'tags':['code','php'], 'updated_at': new Date().getTime()}).value()
-		db.get('notes').push({'id': uuid.v4(), 'body':'# hello!\n\nomg this is really awesome', 'tags':['code','electron'], 'updated_at': new Date().getTime()}).value()
-		db.get('notes').push({'id': uuid.v4(), 'body':'aw yiss', 'tags':['code','omg'], 'updated_at': new Date().getTime()}).value()
+		db.get('notes').push({'id': uuid.v4(), 'body':'# New Note qwjeqwjlkeqwlk', 'tags':['code','php'], 'updated_at': new Date().getTime(), 'deleted': 0}).value()
+		db.get('notes').push({'id': uuid.v4(), 'body':'# hello!\n\nomg this is really awesome', 'tags':['code','electron'], 'updated_at': new Date().getTime(), 'deleted': 0}).value()
+		db.get('notes').push({'id': uuid.v4(), 'body':'aw yiss', 'tags':['code','omg'], 'updated_at': new Date().getTime(), 'deleted': 0}).value()
 	}
 }
 
 function initNoteList() {
-	console.log("init");
+	refreshNoteList();
+
+	// select the first note
+	selectANoteFromNoteList($('#note-list ul li:first'))
+}
+
+function refreshNoteList(){
 	$('#note-list ul').html('');
 
 	// add the loaded notes to note list
 	notes.map(function(note){
 		addNoteToNoteList(note);
 	});
-
-	// select the first note
-	selectANoteFromNoteList($('#note-list ul li:first'))
 }
 
 function initSearchbox() {
-	$('#search-note').on('change paste keyup', function(){
-		search($(this).val());
+	$('#search-note').on('search change paste keyup focusout', function(){
+		var searchVal = $(this).val();
+		search(searchVal);
+	})
+	.keyup(function(e){
+		if(e.keyCode == 27){
+			$(this).blur();
+			editor.focus();
+		}
 	});
 }
 
 function search(searchTerm){
-	notes = db.get('notes').value().filter(function(el){
-		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
-	});
+	notes = db.get('notes').filter(function(el){
+		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 && el.deleted == 0;
+	}).value();
 
 	// 
 	console.log("search results:")
@@ -134,7 +146,8 @@ function setBinds() {
 
 	// Select note from note list
 	$('#note-list ul').on('click', 'li', function(e){
-		selectANoteFromNoteList($(this))
+		$('#search-note').blur();
+		selectANoteFromNoteList($(this));
 	});
 
 	// on click create note button
@@ -228,11 +241,12 @@ function selectANoteFromNoteList($noteElement) {
 	// if(offset + 54 + 20 > window.innerHeight){
 	// 	$('#note-list ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
 	// }
-
 }
 
 function displayNoteToEditor(note){
-
+	if(!note){
+		return;
+	}
 	currentNote = note;
 
 	// Set note body to editor textarea
@@ -265,17 +279,21 @@ function showPreviousNote(){
 }
 
 function createNewNote(){
-	var newNote = {'id': uuid.v4(), 'body':'', 'updated_at': new Date().getTime()}
+	var newNote = {'id': uuid.v4(), 'body':'', 'updated_at': new Date().getTime(), 'deleted': 0, 'tags': []}
 	console.log("create new note:")
 	console.log(newNote)
 	notes = db.get('notes').push(newNote).value()
 
 	addNoteToNoteList(newNote)
 	selectANoteFromNoteList($('#note-list ul li:first'))
+	editor.focus();
 }
 
 function deleteNote($noteElement){
-	db.get('notes').remove({'id': $noteElement.attr('id')}).value()
+	db.get('notes').find({id: $noteElement.attr('id')}).assign({
+		deleted: 1,
+		updated_at: new Date().getTime()
+	}).value()
 
 	$noteElement.animate({
 	    height: '0',
