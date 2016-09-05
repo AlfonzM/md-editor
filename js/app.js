@@ -9,9 +9,9 @@ const ipcRenderer = electron.ipcRenderer;
 const tagsInput = require('tags-input');
 
 var uuid = require('node-uuid'),
-	$ = require('jquery'),
-	marked = require('marked'),
-	low = require('lowdb');
+$ = require('jquery'),
+marked = require('marked'),
+low = require('lowdb');
 
 // require('./js/ace/ace.js');
 
@@ -20,13 +20,20 @@ var editor;
 var notes = [];
 var currentNote;
 
-var $editor, $editorTextArea, $preview, $sidebar;
+var $editor,
+	$editorTextArea,
+	$preview,
+	$commandPalette,
+	$commandPaletteInput,
+	$sidebar;
 
 $(document).ready(function (){
 	$editor = $("#editor");
 	$editorTextArea = $("#editor-textarea");
 	$preview = $("#preview");
 	$sidebar = $("#sidebar");
+	$commandPalette = $("#command-palette");
+	$commandPaletteInput = $("#command-palette").find('input[type="text"]');
 
 	// Hide sidebar by default
 	$sidebar.hide();
@@ -35,6 +42,8 @@ $(document).ready(function (){
 	initNotes();
 	initNoteList();
 	initSearchbox();
+	initCommandPalette();
+	initEditorAndPreviewWindow();
 	setBinds();
 	// initTags();
 });
@@ -56,9 +65,11 @@ function initAce() {
 
 	editor.$blockScrolling = Infinity;
 
-    editor.container.style.lineHeight = 1.4;
+	editor.container.style.lineHeight = 1.5;
 
-    // editor.renderer.setScrollMargin(30, 30);
+    editor.renderer.setScrollMargin(30, 30);
+    editor.renderer.setPadding(20);
+    $(window).resize();
     // editor.container.style.padding = '20px';
 
     // editor.container.style.fontWeight = 300;
@@ -75,13 +86,9 @@ function initNotes(){
 	db.defaults({'notes': []}).value()
 	notes = db.get('notes').filter({ 'deleted': 0}).value()
 
-	console.log(notes);
-
 	// Seed dummy notes
 	if(notes.length === 0){
 		db.get('notes').push({'id': uuid.v4(), 'body':'# New Note qwjeqwjlkeqwlk', 'tags':['code','php'], 'updated_at': new Date().getTime(), 'deleted': 0}).value()
-		db.get('notes').push({'id': uuid.v4(), 'body':'# hello!\n\nomg this is really awesome', 'tags':['code','electron'], 'updated_at': new Date().getTime(), 'deleted': 0}).value()
-		db.get('notes').push({'id': uuid.v4(), 'body':'aw yiss', 'tags':['code','omg'], 'updated_at': new Date().getTime(), 'deleted': 0}).value()
 	}
 }
 
@@ -102,8 +109,9 @@ function refreshNoteList(){
 }
 
 function initSearchbox() {
-	$('#search-note').on('search change paste keyup focusout', function(){
+	$('input#search-note').on('search change paste keyup', function(){
 		var searchVal = $(this).val();
+		// alert('qwe');
 		search(searchVal);
 	})
 	.keyup(function(e){
@@ -114,16 +122,29 @@ function initSearchbox() {
 	});
 }
 
-function search(searchTerm){
-	notes = db.get('notes').filter(function(el){
-		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 && el.deleted == 0;
-	}).value();
+function initCommandPalette() {
+	$commandPaletteInput.on('search change paste keyup', function(){
+		search($(this).val());
+	})
+	.keyup(function(e){
+		// press ESC or enter
+		if(e.keyCode == 27 || e.keyCode == 13){
+			$commandPalette.hide();
+			$commandPaletteInput.val('');
+		}
 
-	// 
-	console.log("search results:")
-	console.log(notes)
+		// press ESC
+		if(e.keyCode == 27){
+			search('');
+		}
+		// press enter
+		else if(e.keyCode == 13){
+		}
 
-	initNoteList();
+	});
+}
+
+function initEditorAndPreviewWindow() {
 }
 
 function setBinds() {
@@ -193,13 +214,12 @@ function getNoteTitleOfNoteBody(noteBody) {
 	// noteSubtitle = splitted[1].replace(/^[^a-zA-Z0-9]*|[^a-zA-Z0-9]*$/g, '');
 
 	// get first and second non-blank text
-	// console.log(noteTitle + ' / ' + noteSubtitle);
 }
 
 // TAGS ---------------------
 
 function inputTags(e){
-	console.log('input ' + this.value);
+	// console.log('input ' + this.value);
 }
 
 function changeTags(e){
@@ -230,8 +250,9 @@ function selectANoteFromNoteList($noteElement) {
 		{ return o.id == id }
 	})
 
-	console.log("THE SELECTED NOTE")
-	console.log(note)
+	if(!note){
+		showEmptyNote();
+	}
 
 	$('.active').removeClass('active')
 	$noteElement.addClass('active')
@@ -241,6 +262,10 @@ function selectANoteFromNoteList($noteElement) {
 	// if(offset + 54 + 20 > window.innerHeight){
 	// 	$('#note-list ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
 	// }
+}
+
+function showEmptyNote(){
+	// TODO: show a "no note selected" message thingy
 }
 
 function displayNoteToEditor(note){
@@ -256,15 +281,21 @@ function displayNoteToEditor(note){
 	initTags(note.tags);
 	// [].forEach.call($('input[type="tags"]'), tagsInput);
 
+	// Toggle preview based on saved preview setting
+	(currentNote.preview_enabled) ? $preview.show() : $preview.hide();
+
+	// Toggle editor based on saved preview setting
+	(currentNote.editor_enabled) ? $editor.show() : $editor.hide();
+
 	refreshOutput();
 }
 
 function addNoteToNoteList(note) {
 	$('#note-list ul').prepend('\
 		<li id=' + note.id + '>\
-			<h1>' + getNoteTitleOfNoteBody(note.body) + '</h1>\
-			<span>' + dateFormat(note.updated_at, 'shortDate') + '</span>\
-			<button class="btn btn-delete-note"><i class="icon ion-close-round"></i></button>\
+		<h1>' + getNoteTitleOfNoteBody(note.body) + '</h1>\
+		<span>' + dateFormat(note.updated_at, 'shortDate') + '</span>\
+		<button class="btn btn-delete-note"><i class="icon ion-close-round"></i></button>\
 		</li>');
 }
 
@@ -279,9 +310,15 @@ function showPreviousNote(){
 }
 
 function createNewNote(){
-	var newNote = {'id': uuid.v4(), 'body':'', 'updated_at': new Date().getTime(), 'deleted': 0, 'tags': []}
-	console.log("create new note:")
-	console.log(newNote)
+	var newNote = {
+		'id': uuid.v4(),
+		'body':'',
+		'updated_at': new Date().getTime(),
+		'deleted': 0,
+		'tags': [],
+		'preview_enabled': true,
+		'editor_enabled': true,
+	}
 	notes = db.get('notes').push(newNote).value()
 
 	addNoteToNoteList(newNote)
@@ -295,19 +332,42 @@ function deleteNote($noteElement){
 		updated_at: new Date().getTime()
 	}).value()
 
+	initNotes();
+
 	$noteElement.animate({
-	    height: '0',
+		height: '0',
 		margin: 0,
 		padding: 0,
 		marginLeft: '-250px',
 		// marginLeft: '-' + $(this).width() + 'px',
 	}, 200, 'swing', function() {
+		$(this).remove();
 		if($noteElement.hasClass('active')) {
 			showNextNote()
 		}
 		
-		// $(this).remove();
 	});
+}
+
+// SEARCH -------------------
+
+function search(searchTerm){
+	notes = db.get('notes').filter(function(el){
+		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 && el.deleted == 0;
+	}).value();
+
+	initNoteList();
+}
+
+function showCommandPalette() {
+	var $targetPane;
+
+	$targetPane = ($editor.is(":visible")) ? $editor : $preview;
+
+	// $targetPane.css('background-color','red');
+
+	$commandPalette.toggle();
+	$commandPaletteInput.focus();
 }
 
 
@@ -325,7 +385,10 @@ ipcRenderer.on('loadEditorContents', function(event, data){
 ipcRenderer.on('togglePreview', function(event){
 	$preview.toggle()
 	editor.resize(true)
-	// $output.remove()
+
+	db.get('notes').find({id:currentNote.id}).assign({
+		'preview_enabled': $preview.is(":visible")
+	}).value()
 });
 
 ipcRenderer.on('toggleSidebar', function(event){
@@ -336,6 +399,10 @@ ipcRenderer.on('toggleSidebar', function(event){
 ipcRenderer.on('toggleEditor', function(event){
 	$editor.toggle()
 	editor.resize(true)
+
+	db.get('notes').find({id:currentNote.id}).assign({
+		'editor_enabled': $editor.is(":visible")
+	}).value()
 });
 
 ipcRenderer.on('nextNote', function(event){
@@ -347,7 +414,8 @@ ipcRenderer.on('previousNote', function(event){
 });
 
 ipcRenderer.on('focusSearchBox', function(event){
-	$("input#search-note").focus()
+	showCommandPalette();
+	// $("input#search-note").focus()
 });
 
 ipcRenderer.on('createNewNote', function(event){

@@ -64,15 +64,29 @@ exports.menus = [
 	    ]
     },
     {
+	    label: 'Find',
+	    submenu: [
+	        { label: "Find", accelerator: "CmdOrCtrl+F", click: function(){
+	            // BrowserWindow.getFocusedWindow().webContents.send('togglePreview');
+	        }},
+	        { label: "Replace", accelerator: "CmdOrCtrl+Alt+F", click: function(){
+	            // BrowserWindow.getFocusedWindow().webContents.send('togglePreview');
+	        }},
+	        { label: "Find in Files", accelerator: "CmdOrCtrl+Shift+F", click: function(){
+	            BrowserWindow.getFocusedWindow().webContents.send('focusSearchBox');
+	        }}
+	    ]
+	},
+    {
 	    label: 'View',
 	    submenu: [
-	        { label: "Show/Hide Preview", accelerator: "CmdOrCtrl+P", click: function(){
+	        { label: "Toggle Preview", accelerator: "CmdOrCtrl+P", click: function(){
 	            BrowserWindow.getFocusedWindow().webContents.send('togglePreview');
 	        }},
-	        { label: "Show/Hide Sidebar", accelerator: "CmdOrCtrl+\\", click: function(){
+	        { label: "Toggle Sidebar", accelerator: "CmdOrCtrl+\\", click: function(){
 	            BrowserWindow.getFocusedWindow().webContents.send('toggleSidebar');
 	        }},
-	        { label: "Show/Hide Editor", accelerator: "CmdOrCtrl+Shift+P", click: function(){
+	        { label: "Toggle Editor", accelerator: "CmdOrCtrl+Shift+P", click: function(){
 	            BrowserWindow.getFocusedWindow().webContents.send('toggleEditor');
 	        }}
 	    ]
