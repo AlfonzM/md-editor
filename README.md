@@ -33,7 +33,7 @@ __Notes__
 - [x] Delete note
 - [ ] Open file and add to list (import)
 - [ ] Save As file (export)
-- [ ] Add tags to notes
+- [x] Add tags to notes
 - [ ] Select multiple notes in notelist (for deleting)
 - [ ] Show "No note selected, create a new note" if notes list is empty
 
@@ -64,7 +64,7 @@ __Keyboard Shortcuts__
 - [x] Ctrl+(Shift)+Tab to cycle notes
 - [x] Toggle Show/Hide Preview window
 - [x] Toggle Show/Hide sidebar
-- [ ] Create note
+- [x] Create note
 - [ ] Delete note
 - [ ] Insert/Edit current line to text format (e.g. change line to Heading 1, insert italic text etc)
 - [ ] Zoom in/Out
