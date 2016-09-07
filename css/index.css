@@ -651,9 +651,6 @@ body {
       width: 100%;
       border: none;
       font-size: 16pt; }
-  .container #sidebar {
-    flex: 0 0 200px;
-    background-color: #ddd; }
   .container #preview {
     height: 100%;
     float: right;
@@ -662,31 +659,44 @@ body {
     box-sizing: border-box;
     min-width: 200px;
     padding: 30px; }
+  .container #sidebar {
+    flex: 0 0 180px;
+    background-color: rgba(0, 0, 0, 0.06);
+    padding-top: 30px;
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden; }
+    .container #sidebar ul {
+      margin: 0;
+      padding: 0;
+      padding-bottom: 1.5em; }
+      .container #sidebar ul li {
+        list-style: none;
+        padding: 0px 15px;
+        font-size: 8pt;
+        text-transform: uppercase;
+        color: #555555;
+        font-weight: 500;
+        line-height: 2.5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+        .container #sidebar ul li i {
+          margin-right: 4px; }
+        .container #sidebar ul li:hover {
+          cursor: default;
+          background-color: rgba(0, 0, 0, 0.08); }
   .container #note-list {
     position: relative;
-    flex: 0 0 220px;
-    background-color: rgba(0, 0, 0, 0.02);
+    flex: 0 0 240px;
+    background-color: rgba(0, 0, 0, 0.025);
     display: flex;
     flex-direction: column; }
-    .container #note-list #search-note {
-      height: 30px;
-      background: none;
-      border: none;
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 4px;
-      padding: 8px;
-      font-size: 9pt;
-      box-sizing: border-box;
-      color: #888888;
-      transition: text-align 1s; }
-      .container #note-list #search-note::-webkit-input-placeholder {
-        text-align: center; }
-      .container #note-list #search-note:focus::-webkit-input-placeholder {
-        text-align: left; }
     .container #note-list span#note-list-label {
       padding: 15px;
       padding-bottom: 10px;
-      margin-top: 1.5em;
+      margin-top: 15px;
       font-size: 8pt;
       text-transform: uppercase;
       font-weight: 400;
@@ -719,7 +729,7 @@ body {
             color: rgba(0, 0, 0, 0.4);
             cursor: pointer; }
       .container #note-list ul li.active {
-        background-color: #98DDDE;
+        background-color: #85d7d8;
         color: white; }
       .container #note-list ul li h1 {
         opacity: 1;
@@ -732,6 +742,7 @@ body {
         overflow: hidden;
         text-overflow: ellipsis; }
       .container #note-list ul li span {
+        font-size: 11px;
         opacity: 0.7; }
       .container #note-list ul li button.btn-delete-note {
         display: none;
@@ -746,3 +757,18 @@ body {
         line-height: 1.4em;
         margin: 0;
         padding: 0; }
+    .container #note-list #search-note {
+      height: 30px;
+      background: none;
+      border: none;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 9pt;
+      box-sizing: border-box;
+      color: #888888;
+      transition: text-align 1s; }
+      .container #note-list #search-note::-webkit-input-placeholder {
+        text-align: center; }
+      .container #note-list #search-note:focus::-webkit-input-placeholder {
+        text-align: left; }

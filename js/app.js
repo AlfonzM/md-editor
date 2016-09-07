@@ -36,7 +36,7 @@ $(document).ready(function (){
 	$commandPaletteInput = $("#command-palette").find('input[type="text"]');
 
 	// Hide sidebar by default
-	$sidebar.hide();
+	// $sidebar.hide();
 
 	initAce();
 	initNotes();

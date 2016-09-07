@@ -142,11 +142,6 @@ body {
 		// bottom: 0;
 	}
 
-	#sidebar {
-		flex: 0 0 200px;
-		background-color: #ddd;
-	}
-
 
 	#preview {
 		height: 100%;
@@ -163,44 +158,67 @@ body {
 		// padding-top: 40px;
 	}
 
+	#sidebar {
+		flex: 0 0 180px;
+		background-color: rgba(0,0,0,0.06);
+		// padding: 15px;
+		padding-top: 30px;
+		box-sizing: border-box;
+
+		height: 100%;
+		overflow-y: scroll;
+		overflow-x: hidden;
+
+		ul {
+			margin: 0;
+			padding: 0;
+
+			padding-bottom: 1.5em;
+
+			// Sidebar Categories list (e.g. All notes, tags)
+			li {
+				list-style: none;
+				padding: 0px 15px;
+
+				font-size: 8pt;
+				text-transform: uppercase;
+				// letter-spacing: 1px;
+				color: $gray-color;
+				font-weight: 500;
+
+				line-height: 2.5;
+
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+
+				i {
+					margin-right: 4px;
+				}
+
+				&:hover {
+					cursor: default;
+					background-color: rgba(0,0,0,0.08);
+				}
+			}
+		}
+	}
+
 	#note-list {
 		// padding-top: 23px;
 		position: relative;
 
-		flex: 0 0 220px;
-		background-color: rgba(0,0,0,0.02);
+		flex: 0 0 240px;
+		background-color: rgba(0,0,0,0.025);
 
 		display: flex;
 		flex-direction: column;
 
-		#search-note {
-			// position: absolute;
-			// bottom: 0;
-			height: 30px;
-			background: none;
-			border: none;
-			border-top: 1px solid rgba(0,0,0,0.12);
-			border-radius: 4px;
-			padding: 8px;
-			font-size: 9pt;
-			box-sizing: border-box;
-			color: $light-gray-color;
-
-			transition: text-align 1s;
-
-			&::-webkit-input-placeholder { 
-				text-align:center;
-			}
-
-			&:focus::-webkit-input-placeholder { 
-				text-align:left;
-			}
-		}
-
 		span#note-list-label{
 			padding: 15px;
 			padding-bottom: 10px;
-			margin-top: 1.5em;
+			margin-top: 15px;
+			// margin-top: 1.5em;
 
 			font-size: 8pt;
 			text-transform: uppercase;
@@ -254,7 +272,7 @@ body {
 			}
 
 			&.active {
-				background-color: $brand-color;
+				background-color: darken($brand-color, 5%);
 				color: white;
 			}
 
@@ -274,6 +292,7 @@ body {
 
 			// Note timestamp
 			span {
+				font-size: 11px;
 				opacity: 0.7;
 			}
 
@@ -294,6 +313,30 @@ body {
 				line-height: 1.4em;
 				margin: 0;
 				padding: 0;
+			}
+		}
+
+		#search-note {
+			// position: absolute;
+			// bottom: 0;
+			height: 30px;
+			background: none;
+			border: none;
+			border-top: 1px solid rgba(0,0,0,0.12);
+			border-radius: 4px;
+			padding: 8px;
+			font-size: 9pt;
+			box-sizing: border-box;
+			color: $light-gray-color;
+
+			transition: text-align 1s;
+
+			&::-webkit-input-placeholder { 
+				text-align:center;
+			}
+
+			&:focus::-webkit-input-placeholder { 
+				text-align:left;
 			}
 		}
 	}
