@@ -661,7 +661,7 @@ body {
   .container .markdown-body {
     box-sizing: border-box;
     min-width: 200px;
-    padding: 20px; }
+    padding: 30px; }
   .container #note-list {
     position: relative;
     flex: 0 0 220px;

@@ -25,7 +25,6 @@ npm run build
 ## TODO
 
 __General__
-- [ ] Preferences window/page
 - [ ] Search notes
 
 __Notes__
@@ -44,10 +43,11 @@ __Editor__
 - [ ] Insert image / Drag image from Finder
 - [ ] Auto scroll Preview window to where editor window cursor is
 - [x] Toggle Show/Hide Preview window
-- [ ] Resize Preview window (draggable separator)
+- [ ] ~~Resize Preview window (draggable separator)~~
 - [ ] GitHub checklist markdown
 - [ ] Code editor keystrokes/shortcuts (Sublime/Atom)
 - [ ] Copy to clipboard button on code snippets
+- [x] Set editor syntax per note
 
 __Sidebars__
 - [x] Navigate notes in sidebar
@@ -56,9 +56,14 @@ __Sidebars__
 - [ ] View notes by tags in sidebar
 
 __Format__
-- [ ] Use external Markdown CSS theme
-- [ ] Edit editor Font (font-size, font-family, line-height)
+- [ ] ~~Use external Markdown CSS theme~~
+- [ ] ~~Edit editor Font (font-size, font-family, line-height)~~
+- [ ] Change font size
 - [ ] Use syntax highlighter themes
+
+__Preferences (menu bar items)__
+- [ ] Ace editor options
+- [ ] Color scheme?
 
 __Keyboard Shortcuts__
 - [x] Ctrl+(Shift)+Tab to cycle notes
@@ -68,5 +73,7 @@ __Keyboard Shortcuts__
 - [ ] Delete note
 - [ ] Insert/Edit current line to text format (e.g. change line to Heading 1, insert italic text etc)
 - [ ] Zoom in/Out
-- [ ] Open Preferences window
 - [x] Cmd+Opt+F search notes
+
+__Known bugs__
+- [ ] Weird tag editor width when switching from notes with and without Preview pane

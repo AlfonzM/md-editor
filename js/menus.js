@@ -86,9 +86,34 @@ exports.menus = [
 	        { label: "Toggle Sidebar", accelerator: "CmdOrCtrl+\\", click: function(){
 	            BrowserWindow.getFocusedWindow().webContents.send('toggleSidebar');
 	        }},
-	        { label: "Toggle Editor", accelerator: "CmdOrCtrl+Shift+P", click: function(){
-	            BrowserWindow.getFocusedWindow().webContents.send('toggleEditor');
-	        }}
+	        { type: 'separator' },
+			{ label: "Syntax", submenu: [
+					{ label: 'Markdown', type: 'radio', checked: true, click: function(menuItem, browserWindow, event) {
+						BrowserWindow.getFocusedWindow().webContents.send('selectSyntax', 'Markdown'.toLowerCase() )} 
+					},
+					{ label: 'C', type: 'radio', checked: false, click: function(menuItem, browserWindow, event) {
+						BrowserWindow.getFocusedWindow().webContents.send('selectSyntax', 'C'.toLowerCase() )} 
+					},
+					{ label: 'C#', type: 'radio', checked: false, click: function(menuItem, browserWindow, event) {
+						BrowserWindow.getFocusedWindow().webContents.send('selectSyntax', 'CSharp'.toLowerCase() )} 
+					},
+					{ label: 'Haxe', type: 'radio', checked: false, click: function(menuItem, browserWindow, event) {
+						BrowserWindow.getFocusedWindow().webContents.send('selectSyntax', 'Haxe'.toLowerCase() )} 
+					},
+					{ label: 'Java', type: 'radio', checked: false, click: function(menuItem, browserWindow, event) {
+						BrowserWindow.getFocusedWindow().webContents.send('selectSyntax', 'Java'.toLowerCase() )} 
+					},
+					{ label: 'Javascript', type: 'radio', checked: false, click: function(menuItem, browserWindow, event) {
+						BrowserWindow.getFocusedWindow().webContents.send('selectSyntax', 'Javascript'.toLowerCase() )} 
+					},
+					{ label: 'PHP', type: 'radio', checked: false, click: function(menuItem, browserWindow, event) {
+						BrowserWindow.getFocusedWindow().webContents.send('selectSyntax', 'PHP'.toLowerCase() )} 
+					},
+				]
+			},
+	        // { label: "Toggle Editor", accelerator: "CmdOrCtrl+Shift+P", click: function(){
+	        //     BrowserWindow.getFocusedWindow().webContents.send('toggleEditor');
+	        // }}
 	    ]
 	},
     {

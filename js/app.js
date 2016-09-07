@@ -82,6 +82,10 @@ function initAce() {
 }
 
 function initNotes(){
+	fetchNotesFromDB();
+}
+
+function fetchNotesFromDB() {
 	// fetch the notes from db
 	db.defaults({'notes': []}).value()
 	notes = db.get('notes').filter({ 'deleted': 0}).value()
@@ -92,11 +96,11 @@ function initNotes(){
 	}
 }
 
-function initNoteList() {
+function initNoteList(focusEditor = true) {
 	refreshNoteList();
 
 	// select the first note
-	selectANoteFromNoteList($('#note-list ul li:first'))
+	selectANoteFromNoteList($('#note-list ul li:first'), focusEditor)
 }
 
 function refreshNoteList(){
@@ -126,6 +130,11 @@ function initCommandPalette() {
 	$commandPaletteInput.on('search change paste keyup', function(){
 		search($(this).val());
 	})
+	.on('focusout', function(){
+		$commandPalette.hide();
+		$commandPaletteInput.val('');
+		// search('');
+	})
 	.keyup(function(e){
 		// press ESC or enter
 		if(e.keyCode == 27 || e.keyCode == 13){
@@ -137,10 +146,10 @@ function initCommandPalette() {
 		if(e.keyCode == 27){
 			search('');
 		}
+
 		// press enter
 		else if(e.keyCode == 13){
 		}
-
 	});
 }
 
@@ -216,6 +225,14 @@ function getNoteTitleOfNoteBody(noteBody) {
 	// get first and second non-blank text
 }
 
+function setEditorSyntax(syntax = 'markdown') {
+	editor.setOptions({ mode: 'ace/mode/' + syntax });
+
+	if(syntax == 'markdown') {
+		$preview.show();
+	}
+}
+
 // TAGS ---------------------
 
 function inputTags(e){
@@ -241,7 +258,7 @@ function selectTag(e){
 }
 
 // NOTES LIST -----------------
-function selectANoteFromNoteList($noteElement) {
+function selectANoteFromNoteList($noteElement, focusEditor = true) {
 	var id = $noteElement.attr('id')
 
 	console.log("SELECTED NOTE ID: " + id)
@@ -258,6 +275,10 @@ function selectANoteFromNoteList($noteElement) {
 	$noteElement.addClass('active')
 
 	displayNoteToEditor(note)
+
+	if(focusEditor){
+		editor.focus();
+	}
 
 	// if(offset + 54 + 20 > window.innerHeight){
 	// 	$('#note-list ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
@@ -277,6 +298,9 @@ function displayNoteToEditor(note){
 	// Set note body to editor textarea
 	editor.setValue(note.body, -1);
 
+	// Set editor syntax
+	setEditorSyntax(note.syntax);
+
 	// Set tags
 	initTags(note.tags);
 	// [].forEach.call($('input[type="tags"]'), tagsInput);
@@ -284,10 +308,10 @@ function displayNoteToEditor(note){
 	// Toggle preview based on saved preview setting
 	(currentNote.preview_enabled) ? $preview.show() : $preview.hide();
 
-	// Toggle editor based on saved preview setting
-	(currentNote.editor_enabled) ? $editor.show() : $editor.hide();
-
 	refreshOutput();
+
+	// Trigger resize to trigger word wrap
+    $(window).resize();
 }
 
 function addNoteToNoteList(note) {
@@ -317,7 +341,6 @@ function createNewNote(){
 		'deleted': 0,
 		'tags': [],
 		'preview_enabled': true,
-		'editor_enabled': true,
 	}
 	notes = db.get('notes').push(newNote).value()
 
@@ -332,7 +355,9 @@ function deleteNote($noteElement){
 		updated_at: new Date().getTime()
 	}).value()
 
-	initNotes();
+	fetchNotesFromDB();
+
+	showNextNote();
 
 	$noteElement.animate({
 		height: '0',
@@ -356,7 +381,8 @@ function search(searchTerm){
 		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 && el.deleted == 0;
 	}).value();
 
-	initNoteList();
+	initNoteList(false);
+	$commandPaletteInput.focus();
 }
 
 function showCommandPalette() {
@@ -397,12 +423,12 @@ ipcRenderer.on('toggleSidebar', function(event){
 });
 
 ipcRenderer.on('toggleEditor', function(event){
-	$editor.toggle()
-	editor.resize(true)
+	// $editor.toggle()
+	// editor.resize(true)
 
-	db.get('notes').find({id:currentNote.id}).assign({
-		'editor_enabled': $editor.is(":visible")
-	}).value()
+	// db.get('notes').find({id:currentNote.id}).assign({
+	// 	'editor_enabled': $editor.is(":visible")
+	// }).value()
 });
 
 ipcRenderer.on('nextNote', function(event){
@@ -420,4 +446,12 @@ ipcRenderer.on('focusSearchBox', function(event){
 
 ipcRenderer.on('createNewNote', function(event){
 	createNewNote()
+});
+
+ipcRenderer.on('selectSyntax', function(event, syntax){
+	setEditorSyntax(syntax);
+
+	db.get('notes').find({id:currentNote.id}).assign({
+		'syntax': syntax
+	}).value()
 });
