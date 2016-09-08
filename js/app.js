@@ -89,7 +89,7 @@ function initNotes(){
 function fetchNotesFromDB(filter = {'deleted': 0}) {
 	// fetch the notes from db
 	db.defaults({'notes': []}).value()
-	notes = db.get('notes').filter(filter).value()
+	notes = db.get('notes').filter(filter).sortBy('updated_at').value()
 
 	// Seed dummy notes
 	if(notes.length === 0){
@@ -169,8 +169,12 @@ function initEditorAndPreviewWindow() {
 function setBinds() {
 	// Input code editor change handler
 	editor.on('change', function(){
-		saveNote();
-		refreshOutput();
+		console.log(editor.curOp.command.name);
+		if(editor.curOp.docChanged && ["insertstring", "backspace", "cut", "paste", "indent"].includes(editor.curOp.command.name)) {
+			console.log('save');
+			saveNote();
+			refreshOutput();
+		}
 	});
 
 	// Toggle notelist button
@@ -218,6 +222,8 @@ function refreshOutput(){
 }
 
 function saveNote(){
+	$('#note-list ul li.active').parent().prepend($('#note-list ul li.active'));
+
 	currentNote.body = editor.getValue()
 	db.get('notes').find({id:currentNote.id}).assign({
 		body: currentNote.body,
@@ -256,12 +262,14 @@ function changeTags(e){
 		return;
 	}
 
-	// console.log(this.value.split(','));
+	var tagsArray = this.value.split(',');
 
 	db.get('notes').find({id:currentNote.id}).assign({
-		tags: this.value.split(','),
+		tags: tagsArray,
 		updated_at: new Date().getTime()
 	}).value()
+
+	db.get('tags').push('1232').value()
 }
 
 function selectTag(e){
