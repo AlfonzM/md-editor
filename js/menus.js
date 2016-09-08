@@ -14,9 +14,6 @@ exports.menus = [
     {
     	label: 'File',
 	    submenu: [
-	    { label: "New note", accelerator: "CmdOrCtrl+N", click: function() {
-            BrowserWindow.getFocusedWindow().webContents.send('createNewNote')
-	    }},
 	    { label: "Open", accelerator: "CmdOrCtrl+O", click: function() { 
 	        var filename = dialog.showOpenDialog(BrowserWindow.getFocusedWindow(),
 	        {
@@ -75,6 +72,20 @@ exports.menus = [
 	        { label: "Find in Files", accelerator: "CmdOrCtrl+Shift+F", click: function(){
 	            BrowserWindow.getFocusedWindow().webContents.send('focusSearchBox');
 	        }}
+	    ]
+	},
+    {
+	    label: 'Note',
+	    submenu: [
+		    { label: "New note", accelerator: "CmdOrCtrl+N", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('createNewNote')
+		    }},
+		    { label: "Favorite note", accelerator: "", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('favoriteNote')
+		    }},
+		    { label: "Delete note", accelerator: "CmdOrCtrl+Shift+Delete", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('deleteNote')
+		    }},
 	    ]
 	},
     {

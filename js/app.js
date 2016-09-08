@@ -21,11 +21,11 @@ var notes = [];
 var currentNote;
 
 var $editor,
-	$editorTextArea,
-	$preview,
-	$commandPalette,
-	$commandPaletteInput,
-	$sidebar;
+$editorTextArea,
+$preview,
+$commandPalette,
+$commandPaletteInput,
+$sidebar;
 
 $(document).ready(function (){
 	$editor = $("#editor");
@@ -41,6 +41,7 @@ $(document).ready(function (){
 	initAce();
 	initNotes();
 	initNoteList();
+	initSidebar();
 	initSearchbox();
 	initCommandPalette();
 	initEditorAndPreviewWindow();
@@ -67,9 +68,9 @@ function initAce() {
 
 	editor.container.style.lineHeight = 1.5;
 
-    editor.renderer.setScrollMargin(30, 30);
-    editor.renderer.setPadding(20);
-    $(window).resize();
+	editor.renderer.setScrollMargin(30, 30);
+	editor.renderer.setPadding(20);
+	$(window).resize();
     // editor.container.style.padding = '20px';
 
     // editor.container.style.fontWeight = 300;
@@ -85,10 +86,10 @@ function initNotes(){
 	fetchNotesFromDB();
 }
 
-function fetchNotesFromDB() {
+function fetchNotesFromDB(filter = {'deleted': 0}) {
 	// fetch the notes from db
 	db.defaults({'notes': []}).value()
-	notes = db.get('notes').filter({ 'deleted': 0}).value()
+	notes = db.get('notes').filter(filter).value()
 
 	// Seed dummy notes
 	if(notes.length === 0){
@@ -103,6 +104,15 @@ function initNoteList(focusEditor = true) {
 	selectANoteFromNoteList($('#note-list ul li:first'), focusEditor)
 }
 
+function initSidebar() {
+	$('#sidebar ul li.note-list-type').on('click', function(){
+		// alert($(this).data('note-type'));
+		var noteListType = $(this);
+		selectNoteListType(noteListType);
+	});
+}
+
+// Display the objects in `notes` to the note list UI
 function refreshNoteList(){
 	$('#note-list ul').html('');
 
@@ -246,6 +256,8 @@ function changeTags(e){
 		return;
 	}
 
+	// console.log(this.value.split(','));
+
 	db.get('notes').find({id:currentNote.id}).assign({
 		tags: this.value.split(','),
 		updated_at: new Date().getTime()
@@ -256,6 +268,43 @@ function selectTag(e){
 	// TODO
 	console.log('SELECT TAG: ' + $(e.target).text());
 }
+
+// SIDEBAR ----------------
+
+function selectNoteListType($noteListType){
+	var noteListType = $noteListType.data('note-type');
+	setNoteListTypeLabel($noteListType[0].innerHTML);
+
+	switch(noteListType) {
+		case 'all notes':
+		fetchNotesFromDB({'deleted': 0});
+		break;
+
+		case 'favorites':
+		fetchNotesFromDB({'favorited': 1, 'deleted': 0});
+		break;
+
+		case 'markdown':
+		fetchNotesFromDB({'syntax': 'markdown', 'deleted': 0});
+		break;
+
+		case 'code':
+		fetchNotesFromDB(function(note){
+			return note.syntax !== 'markdown' && note.deleted === 0;
+		});
+		break;
+
+		case 'trash':
+		fetchNotesFromDB({'deleted': 1});
+		break;
+
+		default:
+		fetchNotesFromDB({'deleted': 0});
+		break;
+	}
+	initNoteList();
+}
+
 
 // NOTES LIST -----------------
 function selectANoteFromNoteList($noteElement, focusEditor = true) {
@@ -289,6 +338,18 @@ function showEmptyNote(){
 	// TODO: show a "no note selected" message thingy
 }
 
+function setNoteListTypeLabel(label){
+	// var newLabel = label;
+	// var faIcon = '';
+
+	// switch(label){
+		// case 'trash': break;
+		// default: newLabel += ' notes'; break;
+	// }
+
+	$('#note-list-label').html(label);
+}
+
 function displayNoteToEditor(note){
 	if(!note){
 		return;
@@ -311,7 +372,7 @@ function displayNoteToEditor(note){
 	refreshOutput();
 
 	// Trigger resize to trigger word wrap
-    $(window).resize();
+	$(window).resize();
 }
 
 function addNoteToNoteList(note) {
@@ -340,6 +401,7 @@ function createNewNote(){
 		'updated_at': new Date().getTime(),
 		'deleted': 0,
 		'tags': [],
+		'syntax': 'markdown',
 		'preview_enabled': true,
 	}
 	notes = db.get('notes').push(newNote).value()
@@ -372,6 +434,12 @@ function deleteNote($noteElement){
 		}
 		
 	});
+}
+
+function favoriteNote($noteElement){
+	db.get('notes').find({id: $noteElement.attr('id')}).assign({
+		favorited: 1
+	}).value()
 }
 
 // SEARCH -------------------
@@ -446,6 +514,14 @@ ipcRenderer.on('focusSearchBox', function(event){
 
 ipcRenderer.on('createNewNote', function(event){
 	createNewNote()
+});
+
+ipcRenderer.on('deleteNote', function(event){
+	deleteNote($('#note-list ul li.active'));
+});
+
+ipcRenderer.on('favoriteNote', function(event){
+	favoriteNote($('#note-list ul li.active'));
 });
 
 ipcRenderer.on('selectSyntax', function(event, syntax){
