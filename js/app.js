@@ -1,12 +1,12 @@
 // RENDERER PROCESS
 'use strict';
 
-
 const dateFormat = require('dateformat');
 const electron = require('electron');
 const shell = electron.shell;
 const ipcRenderer = electron.ipcRenderer;
 const tagsInput = require('tags-input');
+const syntaxes = require('./js/syntaxes').syntaxes;
 
 var uuid = require('node-uuid'),
 $ = require('jquery'),
@@ -90,14 +90,13 @@ function fetchNotesFromDB(filter = {'deleted': 0}) {
 	// fetch the notes from db
 	db.defaults({'notes': []}).value()
 	notes = db.get('notes').filter(filter).sortBy('updated_at').value()
-
-	// Seed dummy notes
-	if(notes.length === 0){
-		db.get('notes').push({'id': uuid.v4(), 'body':'# New Note qwjeqwjlkeqwlk', 'tags':['code','php'], 'updated_at': new Date().getTime(), 'deleted': 0}).value()
-	}
 }
 
 function initNoteList(focusEditor = true) {
+	if(notes.length <= 0){
+		// TODO: Show empty note message
+	}
+
 	refreshNoteList();
 
 	// select the first note
@@ -170,9 +169,7 @@ function initEditorAndPreviewWindow() {
 function setBinds() {
 	// Input code editor change handler
 	editor.on('change', function(){
-		console.log(editor.curOp.command.name);
 		if(editor.curOp.docChanged && ["insertstring", "backspace", "cut", "paste", "indent"].includes(editor.curOp.command.name)) {
-			console.log('save');
 			saveNote();
 			refreshOutput();
 		}
@@ -258,9 +255,6 @@ function inputTags(e){
 
 // When a tag is added or removed
 function changeTags(e){
-	console.log('change tags');
-	console.log(db.groupBy(db.get('notes').value(), 'tags').value());
-
 	$('span.tag').bind('click', selectTag);
 
 	if(!this) {
@@ -315,6 +309,16 @@ function selectNoteListType($noteListType){
 		fetchNotesFromDB({'deleted': 1});
 		break;
 
+		case 'syntax':
+		fetchNotesFromDB({'syntax': $noteListType.text().trim().toLowerCase(), 'deleted': 0});
+		break;
+
+		case 'tag':
+		fetchNotesFromDB(function(note){
+			return note.tags.includes($noteListType.text().trim().toLowerCase()) && note.deleted === 0;
+		});
+		break;
+
 		default:
 		fetchNotesFromDB({'deleted': 0});
 		break;
@@ -335,6 +339,9 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 
 	if(!note){
 		showEmptyNote();
+	} else {
+		// Set the checked syntax in the menu items (i.e. View > Syntax > what language is checked)
+		ipcRenderer.send('selectSyntax', syntaxes.findIndex(function (s) { return s.syntax == note.syntax; }));
 	}
 
 	$('#note-list ul li.active').removeClass('active')
@@ -349,6 +356,7 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 	// if(offset + 54 + 20 > window.innerHeight){
 	// 	$('#note-list ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
 	// }
+
 }
 
 function showEmptyNote(){

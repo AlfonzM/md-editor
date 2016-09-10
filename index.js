@@ -15,6 +15,7 @@ require('electron-debug')();
 
 // prevent window being garbage collected
 let mainWindow;
+var applicationMenus;
 
 function onClosed() {
 	// dereference the window
@@ -59,26 +60,34 @@ app.on('ready', () => {
 
 
 var setApplicationMenu = function () {
-    var theMenus = menus.menus;
-    Menu.setApplicationMenu(Menu.buildFromTemplate(theMenus));
+    applicationMenus = Menu.buildFromTemplate(menus.menus);
+    Menu.setApplicationMenu(applicationMenus);
 };
+
+var setSelectedSyntax = function(index = 0){
+    applicationMenus.items[5].submenu.items[3].submenu.items[index].checked = true;
+}
 
 
 
 // IPC Listeners
 
 ipcMain.on('saveFile', (event, data) => {
-	console.log('save file');
+    console.log('save file');
     dialog.showSaveDialog(BrowserWindow.getFocusedWindow(),
     {
         defaultPath: 'Untitled.md',
     },
     function(fileName) {
-    	console.log(fileName)
-    	console.log(data)
+        console.log(fileName)
+        console.log(data)
         if (fileName === undefined) return;
         fs.writeFile(fileName, data, function (err) {   
             console.log(err)
         })
     })
+})
+
+ipcMain.on('selectSyntax', (event, data) => {
+    setSelectedSyntax(data);
 })

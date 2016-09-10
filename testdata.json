@@ -1,0 +1,47 @@
+{
+  "notes": [
+    {
+      "id": "503893d7-8080-4e15-850c-e7fd312052a1",
+      "body": "// Electron Notes\n\n'use strict';\n\nvar app = require('app');\nvar BrowserWindow = require('browser-window');\n\nvar mainWindow = null;\n\napp.on('ready', function() {\n    mainWindow = new BrowserWindow({\n        frame: false,\n        height: 700,\n        resizable: false,\n        width: 368\n    });\n\n    mainWindow.loadUrl('file://' + __dirname + '/app/index.html');\n});\n\n\n\n\n\nhtml,\nbody {\n    -webkit-app-region: drag; /* or no-drag */\n}\n\n\ncreateWindow(‘main’, {\n\twidth: 800px,\n\theight: 600px,\n\ttitleBarStyle: ‘hidden’, // or hidden-inset\n\tframe: false\n});",
+      "updated_at": 1473519155812,
+      "deleted": 0,
+      "tags": [
+        "electron",
+        "javascript"
+      ],
+      "syntax": "javascript",
+      "preview_enabled": false
+    },
+    {
+      "id": "de60fa76-98bc-4334-94b1-cc4a5dc48433",
+      "body": "# This is markdown\n\nHello world! This is a test document for markdown.\n\n- Here we have some lists yey\n- This is another list item how awesome is that!\n\nWe can even add in some code snippets!\n\n\n    console.log(\"Hello world!\");\n    \n    function awesomeFunction() {\n        console.log(\"Dayum this is cool\");\n    }\n    \nHere are some links you cannot __NOT__ click!\n\n- [Awesome link](google.com)\n- [Another awesome link](twitter.com)",
+      "updated_at": 1473519116317,
+      "deleted": 0,
+      "tags": [
+        "markdown"
+      ],
+      "syntax": "markdown",
+      "preview_enabled": true
+    },
+    {
+      "id": "082eaa45-8bf4-49fc-8b24-305cf5fc5d0e",
+      "body": "# Terminal Cheat Sheet\n\n## adding to path\n\n    $ PATH=/path/to/add:$PATH\n\n## edit bash profile\n\n    $ vim .bash_profile\n\n\n## LESS\n\n    $ autoless\n\n$ zip -er name.zip folder\n\n\n## tar\n    \n    tar -cvzf xcode.tar.gz ./Xcode.app/\n\n\n## MOV to GIF Convert\n\n    ffmpeg -i input.mov -vf scale=480:-1 -r 30 frames/ffout%03d.png\n    convert -delay 3 -layers OptimizeFrame -loop 0 frames/ffout*.png output.gif\n\n\n## CLEAR XCode CoreSimulator folder\n\n    xcrun simctl delete unavailable",
+      "updated_at": 1473519101797,
+      "deleted": 0,
+      "tags": [
+        "terminal"
+      ],
+      "syntax": "markdown",
+      "preview_enabled": true
+    },
+    {
+      "id": "df656295-6b5a-4e0d-9feb-bf5e1ec94d7d",
+      "body": "This is a deleted note. So sad :(",
+      "updated_at": 1473519171365,
+      "deleted": 1,
+      "tags": [],
+      "syntax": "markdown",
+      "preview_enabled": true
+    }
+  ]
+}
