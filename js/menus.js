@@ -109,6 +109,11 @@ exports.menus = [
 	        { type: 'separator' },
 			{ label: "Syntax", submenu: syntaxSubmenu
 			},
+	        { type: 'separator' },
+	        { label: "Actual Size", accelerator: "CmdOrCtrl+0", role: 'resetzoom' },
+	        { label: "Zoom In", accelerator: "CmdOrCtrl+Shift+=", role: 'zoomin' },
+	        { label: "Zoom Out", accelerator: "CmdOrCtrl+-", role: 'zoomout' },
+	        { label: "Enter Full Screen", accelerator: 'Control+Command+F', role: 'togglefullscreen' },
 	        // { label: "Toggle Editor", accelerator: "CmdOrCtrl+Shift+P", click: function(){
 	        //     BrowserWindow.getFocusedWindow().webContents.send('toggleEditor');
 	        // }}
@@ -146,6 +151,13 @@ exports.menus = [
 	            app.quit();
 	        }
 	    }]
+	},
+	{
+		label: 'Help',
+		role: 'help',
+		submenu: [
+	        // { label: "Help" },
+		]
 	}
 ];
 

@@ -660,7 +660,7 @@ body {
     min-width: 200px;
     padding: 30px; }
   .container #sidebar {
-    flex: 0 0 180px;
+    flex: 0 0 150px;
     background-color: rgba(0, 0, 0, 0.06);
     padding-top: 30px;
     box-sizing: border-box;
@@ -745,9 +745,8 @@ body {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis; }
-      .container #note-list ul li span {
-        font-size: 11px;
-        opacity: 0.7; }
+      .container #note-list ul li span.note-timestamp {
+        opacity: 0.6; }
       .container #note-list ul li button.btn-delete-note {
         display: none;
         background: none;

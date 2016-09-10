@@ -159,7 +159,7 @@ body {
 	}
 
 	#sidebar {
-		flex: 0 0 180px;
+		flex: 0 0 150px;
 		background-color: rgba(0,0,0,0.06);
 		// padding: 15px;
 		padding-top: 30px;
@@ -297,9 +297,9 @@ body {
 			}
 
 			// Note timestamp
-			span {
-				font-size: 11px;
-				opacity: 0.7;
+			span.note-timestamp {
+				// font-size: 9pt;
+				opacity: 0.6;
 			}
 
 			// Note list note delete button

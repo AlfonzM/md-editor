@@ -2,6 +2,7 @@
 'use strict';
 
 const dateFormat = require('dateformat');
+const moment = require('moment');
 const electron = require('electron');
 const shell = electron.shell;
 const ipcRenderer = electron.ipcRenderer;
@@ -241,10 +242,7 @@ function getNoteTitleOfNoteBody(noteBody) {
 
 function setEditorSyntax(syntax = 'markdown') {
 	editor.setOptions({ mode: 'ace/mode/' + syntax });
-
-	if(syntax == 'markdown') {
-		$preview.show();
-	}
+	(syntax == 'markdown') ? $preview.show() : $preview.hide();
 }
 
 // TAGS ---------------------
@@ -404,7 +402,7 @@ function addNoteToNoteList(note) {
 	$('#note-list ul').prepend('\
 		<li id=' + note.id + '>\
 		<h1>' + getNoteTitleOfNoteBody(note.body) + '</h1>\
-		<span>' + dateFormat(note.updated_at, 'shortDate') + ' (PHP)</span>\
+		<span class="note-timestamp">' + moment(note.updated_at).fromNow() + '</span>\
 		<button class="btn btn-delete-note"><i class="icon ion-close-round"></i></button>\
 		</li>');
 }
@@ -472,7 +470,7 @@ function favoriteNote($noteElement){
 function search(searchTerm){
 	notes = db.get('notes').filter(function(el){
 		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 && el.deleted == 0;
-	}).value();
+	}).sortBy('updated_at').value();
 
 	initNoteList(false);
 	$commandPaletteInput.focus();
