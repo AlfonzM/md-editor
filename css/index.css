@@ -577,7 +577,10 @@ html, body {
 
 body {
   display: flex;
-  font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif; }
+  font-family: -apple-system, 'BlinkMacSystemFont', Helvetica, Arial, sans-serif;
+  color: #222222; }
+  body a {
+    color: #222222; }
   body input[type="text"], body input[type="search"] {
     outline: none; }
   body button.btn {
@@ -655,6 +658,23 @@ body {
     height: 100%;
     float: right;
     border-left: 1px solid #eee; }
+  .container #empty-note {
+    margin: 0;
+    padding: 30px;
+    font-size: 28pt;
+    font-weight: 300;
+    opacity: 1;
+    color: #bbbbbb;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    .container #empty-note span a {
+      color: #888888;
+      transition: color 0.15s; }
+      .container #empty-note span a:hover {
+        color: #555555; }
   .container .markdown-body {
     box-sizing: border-box;
     min-width: 200px;

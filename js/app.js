@@ -26,6 +26,7 @@ $editorTextArea,
 $preview,
 $commandPalette,
 $commandPaletteInput,
+$emptyNote,
 $sidebar;
 
 $(document).ready(function (){
@@ -35,6 +36,7 @@ $(document).ready(function (){
 	$sidebar = $("#sidebar");
 	$commandPalette = $("#command-palette");
 	$commandPaletteInput = $("#command-palette").find('input[type="text"]');
+	$emptyNote = $("#empty-note");
 
 	// Hide sidebar by default
 	// $sidebar.hide();
@@ -46,6 +48,7 @@ $(document).ready(function (){
 	initSearchbox();
 	initCommandPalette();
 	initEditorAndPreviewWindow();
+	initEmptyNote();
 	setBinds();
 	// initTags();
 });
@@ -95,7 +98,9 @@ function fetchNotesFromDB(filter = {'deleted': 0}) {
 
 function initNoteList(focusEditor = true) {
 	if(notes.length <= 0){
-		// TODO: Show empty note message
+		showEmptyNote();
+	} else {
+		hideEmptyNote();
 	}
 
 	refreshNoteList();
@@ -106,7 +111,6 @@ function initNoteList(focusEditor = true) {
 
 function initSidebar() {
 	$('#sidebar ul li.note-list-type').on('click', function(){
-		$('#sidebar ul li.note-list-type.active').removeClass('active');
 		var noteListType = $(this);
 		selectNoteListType(noteListType);
 	});
@@ -165,6 +169,12 @@ function initCommandPalette() {
 }
 
 function initEditorAndPreviewWindow() {
+}
+
+function initEmptyNote() {
+	$emptyNote.on('click', function(){
+		createNewNote();
+	});
 }
 
 function setBinds() {
@@ -279,10 +289,21 @@ function selectTag(e){
 // SIDEBAR ----------------
 
 function selectNoteListType($noteListType){
-	
-	$noteListType.addClass('active');
+	$('#sidebar ul li.note-list-type.active').removeClass('active');
 	var noteListType = $noteListType.data('note-type');
+
+	filterNoteListType(noteListType, $noteListType);
+}
+
+function filterNoteListType(noteListType, $noteListType = null){
+	$('#sidebar ul li.note-list-type.active').removeClass('active');
+	
+	if(!$noteListType){
+		$noteListType = $('ul.notes-list li[data-note-type=' + noteListType + ']');
+	}
+
 	setNoteListTypeLabel($noteListType[0].innerHTML);
+	$noteListType.addClass('active');
 
 	switch(noteListType) {
 		case 'all notes':
@@ -335,11 +356,13 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 		{ return o.id == id }
 	})
 
-	if(!note){
-		showEmptyNote();
-	} else {
+	if(note){
 		// Set the checked syntax in the menu items (i.e. View > Syntax > what language is checked)
 		ipcRenderer.send('selectSyntax', syntaxes.findIndex(function (s) { return s.syntax == note.syntax; }));
+
+		hideEmptyNote();
+	} else {
+		showEmptyNote();
 	}
 
 	$('#note-list ul li.active').removeClass('active')
@@ -358,7 +381,14 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 }
 
 function showEmptyNote(){
-	// TODO: show a "no note selected" message thingy
+	$emptyNote.show();
+	$editor.hide();
+	$preview.hide();
+}
+
+function hideEmptyNote() {
+	$emptyNote.hide();
+	$editor.show();
 }
 
 function setNoteListTypeLabel(label){
@@ -435,15 +465,24 @@ function createNewNote(){
 }
 
 function deleteNote($noteElement){
-	db.get('notes').find({id: $noteElement.attr('id')}).assign({
-		deleted: 1,
-		updated_at: new Date().getTime()
-	}).value()
+	if(currentNote.deleted == 1){
+		if(confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
+			db.get('notes').remove({id: $noteElement.attr('id')}).value()
+		} else {
+			return;
+		}
+	} else {
+		db.get('notes').find({id: $noteElement.attr('id')}).assign({
+			deleted: 1,
+			updated_at: new Date().getTime()
+		}).value()
+	}
 
 	fetchNotesFromDB();
+	removeNoteElementFromNoteList($noteElement);
+}
 
-	showNextNote();
-
+function removeNoteElementFromNoteList($noteElement){
 	$noteElement.animate({
 		height: '0',
 		margin: 0,
@@ -455,7 +494,6 @@ function deleteNote($noteElement){
 		if($noteElement.hasClass('active')) {
 			showNextNote()
 		}
-		
 	});
 }
 
@@ -545,6 +583,10 @@ ipcRenderer.on('deleteNote', function(event){
 
 ipcRenderer.on('favoriteNote', function(event){
 	favoriteNote($('#note-list ul li.active'));
+});
+
+ipcRenderer.on('selectNoteListType', function(event, noteListType){
+	filterNoteListType(noteListType);
 });
 
 ipcRenderer.on('selectSyntax', function(event, syntax){

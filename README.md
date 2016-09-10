@@ -34,7 +34,7 @@ __Notes__
 - [ ] Save As file (export)
 - [x] Add tags to notes
 - [ ] Select multiple notes in notelist (for deleting)
-- [ ] Show "No note selected, create a new note" if notes list is empty
+- [x] Show "No note selected, create a new note" if notes list is empty
 
 __Editor__
 - [x] Auto save on type (no need to Save/Open files)
@@ -46,15 +46,16 @@ __Editor__
 - [ ] ~~Resize Preview window (draggable separator)~~
 - [ ] GitHub checklist markdown
 - [ ] Code editor keystrokes/shortcuts (Sublime/Atom)
-- [ ] Copy to clipboard button on code snippets
+- [ ] "Copy to clipboard" button on code snippets
 - [x] Set editor syntax per note
 
 __Sidebars__
-- [ ] Filter by All Notes, Favorites, etc
+- [x] Filter by All Notes, Favorites, etc
 - [x] Navigate notes in sidebar
 - [x] Toggle show sidebar
 - [x] Sort notes list by updated_by date
-- [ ] View notes by tags in sidebar
+- [x] View notes by tags in sidebar
+- [ ] List available tags and syntaxes in sidebar
 
 __Format__
 - [ ] ~~Use external Markdown CSS theme~~
@@ -73,7 +74,7 @@ __Keyboard Shortcuts__
 - [x] Create note
 - [ ] Delete note
 - [ ] Insert/Edit current line to text format (e.g. change line to Heading 1, insert italic text etc)
-- [ ] Zoom in/Out
+- [x] Zoom in/Out
 - [x] Cmd+Opt+F search notes
 
 __Known bugs__

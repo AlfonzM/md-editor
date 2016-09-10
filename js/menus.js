@@ -95,6 +95,22 @@ exports.menus = [
 		    { label: "Delete note", accelerator: "CmdOrCtrl+Shift+Delete", click: function() {
 	            BrowserWindow.getFocusedWindow().webContents.send('deleteNote')
 		    }},
+		    { type: 'separator' },
+		    { label: "Show All Notes", accelerator: "CmdOrCtrl+1", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('selectNoteListType', 'all')
+		    }},
+		    { label: "Show Favorites", accelerator: "CmdOrCtrl+2", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('selectNoteListType', 'favorites')
+		    }},
+		    { label: "Show Markdown Notes", accelerator: "CmdOrCtrl+3", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('selectNoteListType', 'markdown')
+		    }},
+		    { label: "Show Code Notes", accelerator: "CmdOrCtrl+4", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('selectNoteListType', 'code')
+		    }},
+		    { label: "Show Deleted Notes", accelerator: "CmdOrCtrl+5", click: function() {
+	            BrowserWindow.getFocusedWindow().webContents.send('selectNoteListType', 'trash')
+		    }}
 	    ]
 	},
     {
