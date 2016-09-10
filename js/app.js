@@ -106,7 +106,7 @@ function initNoteList(focusEditor = true) {
 
 function initSidebar() {
 	$('#sidebar ul li.note-list-type').on('click', function(){
-		// alert($(this).data('note-type'));
+		$('#sidebar ul li.note-list-type.active').removeClass('active');
 		var noteListType = $(this);
 		selectNoteListType(noteListType);
 	});
@@ -137,7 +137,8 @@ function initSearchbox() {
 }
 
 function initCommandPalette() {
-	$commandPaletteInput.on('search change paste keyup', function(){
+	$commandPaletteInput.on('paste keyup', function(e){
+		console.log(e);
 		search($(this).val());
 	})
 	.on('focusout', function(){
@@ -252,10 +253,14 @@ function setEditorSyntax(syntax = 'markdown') {
 // TAGS ---------------------
 
 function inputTags(e){
-	// console.log('input ' + this.value);
+	console.log('input ' + this.value);
 }
 
+// When a tag is added or removed
 function changeTags(e){
+	console.log('change tags');
+	console.log(db.groupBy(db.get('notes').value(), 'tags').value());
+
 	$('span.tag').bind('click', selectTag);
 
 	if(!this) {
@@ -269,7 +274,9 @@ function changeTags(e){
 		updated_at: new Date().getTime()
 	}).value()
 
-	db.get('tags').push('1232').value()
+	// console.log(db.get('tags').value())
+	// console.log(db.get('tags').union(tagsArray).value())
+	console.log(db.get('tags').assign(db.get('tags').union(tagsArray).value()).value())
 }
 
 function selectTag(e){
@@ -280,6 +287,8 @@ function selectTag(e){
 // SIDEBAR ----------------
 
 function selectNoteListType($noteListType){
+	
+	$noteListType.addClass('active');
 	var noteListType = $noteListType.data('note-type');
 	setNoteListTypeLabel($noteListType[0].innerHTML);
 
@@ -318,7 +327,7 @@ function selectNoteListType($noteListType){
 function selectANoteFromNoteList($noteElement, focusEditor = true) {
 	var id = $noteElement.attr('id')
 
-	console.log("SELECTED NOTE ID: " + id)
+	// console.log("SELECTED NOTE ID: " + id)
 
 	var note = notes.find(function (o){
 		{ return o.id == id }
@@ -328,7 +337,7 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 		showEmptyNote();
 	}
 
-	$('.active').removeClass('active')
+	$('#note-list ul li.active').removeClass('active')
 	$noteElement.addClass('active')
 
 	displayNoteToEditor(note)
@@ -387,7 +396,7 @@ function addNoteToNoteList(note) {
 	$('#note-list ul').prepend('\
 		<li id=' + note.id + '>\
 		<h1>' + getNoteTitleOfNoteBody(note.body) + '</h1>\
-		<span>' + dateFormat(note.updated_at, 'shortDate') + '</span>\
+		<span>' + dateFormat(note.updated_at, 'shortDate') + ' (PHP)</span>\
 		<button class="btn btn-delete-note"><i class="icon ion-close-round"></i></button>\
 		</li>');
 }

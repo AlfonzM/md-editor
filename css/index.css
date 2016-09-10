@@ -671,22 +671,26 @@ body {
       margin: 0;
       padding: 0;
       padding-bottom: 16px; }
-      .container #sidebar ul li {
+      .container #sidebar ul li.note-list-type {
         list-style: none;
         padding: 0px 15px;
         font-size: 8pt;
         text-transform: uppercase;
-        color: #555555;
+        color: #6f6f6f;
         font-weight: 500;
         line-height: 2.5;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis; }
-        .container #sidebar ul li i {
+        .container #sidebar ul li.note-list-type i {
           margin-right: 4px; }
-        .container #sidebar ul li:hover {
+        .container #sidebar ul li.note-list-type:hover {
+          transition: background-color 0.15s;
           cursor: default;
-          background-color: rgba(0, 0, 0, 0.08); }
+          background-color: rgba(0, 0, 0, 0.05); }
+        .container #sidebar ul li.note-list-type.active {
+          background-color: rgba(0, 0, 0, 0.1);
+          color: #222222; }
   .container #note-list {
     position: relative;
     flex: 0 0 240px;

@@ -50,9 +50,10 @@ __Editor__
 - [x] Set editor syntax per note
 
 __Sidebars__
+- [ ] Filter by All Notes, Favorites, etc
 - [x] Navigate notes in sidebar
 - [x] Toggle show sidebar
-- [ ] Sort notes list
+- [x] Sort notes list by updated_by date
 - [ ] View notes by tags in sidebar
 
 __Format__
