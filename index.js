@@ -28,7 +28,7 @@ function createMainWindow() {
 		width: 1200,
         // transparent: true,
         height: 700,
-        titleBarStyle: 'hidden',
+        titleBarStyle: 'hiddenInset',
 	});
 
     setApplicationMenu();

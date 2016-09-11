@@ -663,34 +663,36 @@ body {
     padding: 30px;
     font-size: 28pt;
     font-weight: 300;
-    opacity: 1;
     color: #bbbbbb;
     text-align: center;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center; }
-    .container #empty-note span a {
-      color: #888888;
-      transition: color 0.15s; }
-      .container #empty-note span a:hover {
-        color: #555555; }
+    .container #empty-note span {
+      display: none; }
+      .container #empty-note span a {
+        color: #888888;
+        transition: color 0.15s; }
+        .container #empty-note span a:hover {
+          color: #555555; }
   .container .markdown-body {
     box-sizing: border-box;
     min-width: 200px;
     padding: 30px; }
   .container #sidebar {
     flex: 0 0 150px;
-    background-color: rgba(0, 0, 0, 0.06);
-    padding-top: 30px;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding-top: 35px;
     box-sizing: border-box;
     height: 100%;
     overflow-y: scroll;
     overflow-x: hidden; }
     .container #sidebar ul {
       margin: 0;
-      padding: 0;
-      padding-bottom: 16px; }
+      padding: 0; }
+      .container #sidebar ul li:last-child {
+        margin-bottom: 16px; }
       .container #sidebar ul li.note-list-type {
         list-style: none;
         padding: 0px 15px;
@@ -720,7 +722,7 @@ body {
     .container #note-list span#note-list-label {
       padding: 15px;
       padding-bottom: 10px;
-      margin-top: 15px;
+      margin-top: 24px;
       font-size: 8pt;
       text-transform: uppercase;
       font-weight: 400;
