@@ -55,7 +55,7 @@ __Sidebars__
 - [x] Toggle show sidebar
 - [x] Sort notes list by updated_by date
 - [x] View notes by tags in sidebar
-- [ ] List available tags and syntaxes in sidebar
+- [x] List available tags and syntaxes in sidebar
 
 __Format__
 - [ ] ~~Use external Markdown CSS theme~~
@@ -79,3 +79,4 @@ __Keyboard Shortcuts__
 
 __Known bugs__
 - [ ] Weird tag editor width when switching from notes with and without Preview pane
+- [ ] Fix lag on holding paste (Cmd+V)

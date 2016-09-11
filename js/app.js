@@ -8,17 +8,17 @@ const shell = electron.shell;
 const ipcRenderer = electron.ipcRenderer;
 const tagsInput = require('tags-input');
 const syntaxesList = require('./js/syntaxes').syntaxes;
+const _ = require('lodash');
 
 var uuid = require('node-uuid'),
 $ = require('jquery'),
 marked = require('marked'),
 low = require('lowdb');
 
-// require('./js/ace/ace.js');
-
 var db = low(__dirname + '/notesdb.json');
 var editor;
 var notes = [];
+var notesToDisplay = [];
 var tags = [];
 var syntaxes = [];
 var currentNote;
@@ -32,17 +32,7 @@ $emptyNote,
 $sidebar;
 
 $(document).ready(function (){
-	$editor = $("#editor");
-	$editorTextArea = $("#editor-textarea");
-	$preview = $("#preview");
-	$sidebar = $("#sidebar");
-	$commandPalette = $("#command-palette");
-	$commandPaletteInput = $("#command-palette").find('input[type="text"]');
-	$emptyNote = $("#empty-note");
-
-	// Hide sidebar by default
-	// $sidebar.hide();
-
+	cacheDom();
 	initDB();
 	initAce();
 	initSidebar();
@@ -54,6 +44,16 @@ $(document).ready(function (){
 	initEmptyNote();
 	setBinds();
 });
+
+function cacheDom() {
+	$editor = $("#editor");
+	$editorTextArea = $("#editor-textarea");
+	$preview = $("#preview");
+	$sidebar = $("#sidebar");
+	$commandPalette = $("#command-palette");
+	$commandPaletteInput = $("#command-palette").find('input[type="text"]');
+	$emptyNote = $("#empty-note");
+}
 
 function initAce() {
 	editor = ace.edit("editor-textarea");
@@ -86,11 +86,12 @@ function initAce() {
 }
 
 function initDB(){
-	db.defaults({'notes': [], 'tags': [], 'syntaxes': []}).value()
+	db.defaults({'notes': []}).value()
 }
 
 function initNotes(){
 	fetchNotesFromDB();
+	notesToDisplay = notes;
 }
 
 function initNoteList(focusEditor = true) {
@@ -107,13 +108,10 @@ function initNoteList(focusEditor = true) {
 }
 
 function initSidebar() {
-	fetchTagsFromDB();
 	refreshTagsList();
-
-	fetchSyntaxesFromDB();
 	refreshSyntaxesList();
 
-	$('#sidebar ul li.note-list-type').on('click', function(){
+	$('#sidebar ul').on('click', 'li.note-list-type', function(){
 		var noteListType = $(this);
 		selectNoteListType(noteListType);
 	});
@@ -135,7 +133,6 @@ function initSearchbox() {
 
 function initCommandPalette() {
 	$commandPaletteInput.on('paste keyup', function(e){
-		console.log(e);
 		search($(this).val());
 	})
 	.on('focusout', function(){
@@ -166,7 +163,7 @@ function initEditorAndPreviewWindow() {
 
 function initEmptyNote() {
 	$emptyNote.find('span').show();
-	
+
 	$emptyNote.on('click', function(){
 		createNewNote();
 	});
@@ -246,14 +243,13 @@ function getNoteTitleOfNoteBody(noteBody) {
 }
 
 function setEditorSyntax(syntax = 'markdown') {
-	editor.setOptions({ mode: 'ace/mode/' + syntax });
+	editor.setOptions({ mode: 'ace/mode/' + getSyntaxModeName(syntax) });
 	(syntax == 'markdown') ? $preview.show() : $preview.hide();
 }
 
 // TAGS ---------------------
 
 function inputTags(e){
-	console.log('input ' + this.value);
 }
 
 // When a tag is added or removed
@@ -271,9 +267,7 @@ function changeTags(e){
 		updated_at: new Date().getTime()
 	}).value()
 
-	// console.log(db.get('tags').value())
-	// console.log(db.get('tags').union(tagsArray).value())
-	console.log(db.get('tags').assign(db.get('tags').union(tagsArray).value()).value())
+	refreshTagsList();
 }
 
 function selectTag(e){
@@ -284,9 +278,7 @@ function selectTag(e){
 // SIDEBAR ----------------
 
 function selectNoteListType($noteListType){
-	$('#sidebar ul li.note-list-type.active').removeClass('active');
 	var noteListType = $noteListType.data('note-type');
-
 	filterNoteListType(noteListType, $noteListType);
 }
 
@@ -302,39 +294,35 @@ function filterNoteListType(noteListType, $noteListType = null){
 
 	switch(noteListType) {
 		case 'all notes':
-		fetchNotesFromDB({'deleted': 0});
+		notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
 		break;
 
 		case 'favorites':
-		fetchNotesFromDB({'favorited': 1, 'deleted': 0});
+		notesToDisplay = notes.filter(function(n){ return n.favorited == 1 && n.deleted == 0; });
 		break;
 
 		case 'markdown':
-		fetchNotesFromDB({'syntax': 'markdown', 'deleted': 0});
+		notesToDisplay = notes.filter(function(n){ return n.syntax == 'markdown' && n.deleted == 0; });
 		break;
 
 		case 'code':
-		fetchNotesFromDB(function(note){
-			return note.syntax !== 'markdown' && note.deleted === 0;
-		});
+		notesToDisplay = notes.filter(function(n) { return n.syntax !== 'markdown' && n.deleted === 0; });
 		break;
 
 		case 'trash':
-		fetchNotesFromDB({'deleted': 1});
+		notesToDisplay = notes.filter(function(n){ return n.deleted == 1});
 		break;
 
 		case 'syntax':
-		fetchNotesFromDB({'syntax': $noteListType.text().trim().toLowerCase(), 'deleted': 0});
+		notesToDisplay = notes.filter(function(n){ return n.syntax == $noteListType.text().trim().toLowerCase() && n.deleted == 0; });
 		break;
 
 		case 'tag':
-		fetchNotesFromDB(function(note){
-			return note.tags.includes($noteListType.text().trim().toLowerCase()) && note.deleted === 0;
-		});
+		notesToDisplay = notes.filter(function(n){ return n.tags.includes($noteListType.text().trim().toLowerCase()) && n.deleted === 0; });
 		break;
 
 		default:
-		fetchNotesFromDB({'deleted': 0});
+		notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
 		break;
 	}
 	initNoteList();
@@ -342,12 +330,12 @@ function filterNoteListType(noteListType, $noteListType = null){
 
 // SIDEBAR TAGS LIST ----------------
 
-function fetchTagsFromDB() {
-	tags = db.get('tags').sortBy().value()
-}
-
 function refreshTagsList() {
+	// console.log('refresh tags');
+
 	$('#sidebar ul.tags-list').html('');
+
+	tags = _.sortBy(_.uniq(_.flatten(_.map(notes, 'tags'))))
 
 	tags.map(function(tag){
 		addTagToTagsList(tag);
@@ -359,13 +347,12 @@ function addTagToTagsList(tag){
 }
 
 // SIDEBAR SYNTAX LIST -----------------
-
-function fetchSyntaxesFromDB() {
-	syntaxes = db.get('syntaxes').sortBy().value()
-}
-
 function refreshSyntaxesList() {
+	// console.log('refresh syntaxes');
+
 	$('#sidebar ul.syntax-list').html('');
+
+	syntaxes = _.sortBy(_.uniq(_.map(notes, 'syntax')))
 
 	syntaxes.map(function(syntax){
 		addSyntaxToSyntaxesList(syntax);
@@ -375,20 +362,23 @@ function refreshSyntaxesList() {
 function addSyntaxToSyntaxesList(syntax){
 	$('#sidebar ul.syntax-list').append('\
 		<li class="note-list-type" data-note-type="syntax" data-note-type-value="' + syntax + '">\
-		<i class="fa fa-code"></i> ' + getSyntaxDisplayName(syntax) + ' \
+		<i class="fa fa-code"></i> ' + syntax + ' \
 		</li>');
 }
 
-function getSyntaxDisplayName(syntax) {
-	return syntaxesList.find(function(s) { return s.syntax.toLowerCase() == syntax.toLowerCase() }).name;
+function getSyntaxModeName(syntax) {
+	return syntaxesList.find(function(s) { return s.name.toLowerCase() == syntax.toLowerCase() }).syntax;
 }
 
 
 // NOTES LIST -----------------
 
-function fetchNotesFromDB(filter = {'deleted': 0}) {
+function fetchNotesFromDB() {
 	// fetch the notes from db
-	notes = db.get('notes').filter(filter).sortBy('updated_at').value()
+	notes = db.get('notes').sortBy('updated_at').value()
+
+	refreshTagsList();
+	refreshSyntaxesList();
 }
 
 // Display the objects in `notes` to the note list UI
@@ -396,7 +386,7 @@ function refreshNoteList(){
 	$('#note-list ul').html('');
 
 	// add the loaded notes to note list
-	notes.map(function(note){
+	notesToDisplay.map(function(note){
 		addNoteToNoteList(note);
 	});
 }
@@ -404,15 +394,13 @@ function refreshNoteList(){
 function selectANoteFromNoteList($noteElement, focusEditor = true) {
 	var id = $noteElement.attr('id')
 
-	// console.log("SELECTED NOTE ID: " + id)
-
 	var note = notes.find(function (o){
 		{ return o.id == id }
 	})
 
 	if(note){
 		// Set the checked syntax in the menu items (i.e. View > Syntax > what language is checked)
-		ipcRenderer.send('selectSyntax', syntaxesList.findIndex(function (s) { return s.syntax == note.syntax; }));
+		ipcRenderer.send('selectSyntax', syntaxesList.findIndex(function (s) { return s.name.toLowerCase() == note.syntax.toLowerCase(); }));
 
 		hideEmptyNote();
 	} else {
@@ -431,7 +419,6 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 	// if(offset + 54 + 20 > window.innerHeight){
 	// 	$('#note-list ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
 	// }
-
 }
 
 function showEmptyNote(){
@@ -644,9 +631,13 @@ ipcRenderer.on('selectNoteListType', function(event, noteListType){
 });
 
 ipcRenderer.on('selectSyntax', function(event, syntax){
-	setEditorSyntax(syntax);
-
 	db.get('notes').find({id:currentNote.id}).assign({
 		'syntax': syntax
 	}).value()
+
+	setEditorSyntax(syntax);
+	refreshSyntaxesList();
+
+	// filterNoteListType();
+	$('#sidebar ul li.note-list-type[data-note-type-value="' + syntax + '"]').trigger('click');
 });
