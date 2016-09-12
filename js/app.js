@@ -91,7 +91,7 @@ function initDB(){
 
 function initNotes(){
 	fetchNotesFromDB();
-	notesToDisplay = notes;
+	notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
 }
 
 function initNoteList(focusEditor = true) {
