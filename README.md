@@ -24,30 +24,31 @@ npm run build
 
 ## TODO
 
-__General__
-- [ ] Search notes
-
 __Notes__
 - [x] New note
 - [x] Delete note
 - [ ] Open file and add to list (import)
 - [ ] Save As file (export)
 - [x] Add tags to notes
-- [ ] Select multiple notes in notelist (for deleting)
+- [ ] Select multiple notes in notelist? (for deleting or favoriting)
 - [x] Show "No note selected, create a new note" if notes list is empty
+- [x] Search notes
+- [ ] Search notes by tag/syntax
 
 __Editor__
 - [x] Auto save on type (no need to Save/Open files)
 - [x] Open where the user left off
-- [ ] Insert Markdown menu bar item
-- [ ] Insert image / Drag image from Finder
-- [ ] Auto scroll Preview window to where editor window cursor is
 - [x] Toggle Show/Hide Preview window
-- [ ] ~~Resize Preview window (draggable separator)~~
-- [ ] GitHub checklist markdown
 - [ ] Code editor keystrokes/shortcuts (Sublime/Atom)
-- [ ] "Copy to clipboard" button on code snippets
 - [x] Set editor syntax per note
+
+__Markdown Editor__
+- [ ] Auto scroll Preview window to where editor window cursor is
+- [ ] Insert Markdown menu bar item
+- [ ] GitHub checklist markdown
+- [ ] Insert image / Drag image from Finder
+- [ ] "Copy to clipboard" button on code snippets
+- [ ] ~~Resize Preview window (draggable separator)~~
 
 __Sidebars__
 - [x] Filter by All Notes, Favorites, etc
@@ -61,7 +62,7 @@ __Format__
 - [ ] ~~Use external Markdown CSS theme~~
 - [ ] ~~Edit editor Font (font-size, font-family, line-height)~~
 - [ ] Change font size
-- [ ] Use syntax highlighter themes
+- [ ] Select syntax highlighter themes
 
 __Preferences (menu bar items)__
 - [ ] Ace editor options
