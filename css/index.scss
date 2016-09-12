@@ -38,161 +38,175 @@ body {
 	width: 100%;
 	height: 100%;
 
-	#editor, #preview, #note-list {
-		box-sizing: border-box;
-		overflow: scroll;
-	}
-
-	#editor, #preview {
-		flex: 1;
-		display: inline;
-	}
-
-	#editor {
-		position: relative;
+	main {
 		display: flex;
-		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		position: relative;
 
-		#controls {
+		#editor, #preview, #note-list {
+			box-sizing: border-box;
+			overflow: scroll;
+		}
+
+		#editor, #preview {
+			flex: 1;
+			display: inline;
+		}
+
+		#editor {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+
+			#controls {
+				position: absolute;
+				z-index: 1000;
+				background-color: white;
+				width: 100%;
+				color: $light-gray-color;
+				font-size: 8pt;
+				padding: 10px;
+			}
+
+			#editor-textarea {
+				flex: 1;
+				margin: 0;
+
+				// position: absolute;
+				// left: 0;
+				// right: 0;
+				// bottom: 0;
+				// top: 0;
+				// margin: 0;
+			}
+
+			#tags-editor {
+				$tag-bg-color: transparentize($brand-color, 0.8);
+				$tag-bg-color-hover: transparentize($brand-color, 0.5);
+				$tag-color: transparentize(darken($brand-color, 50%), 0.5);
+
+				background: none;
+				padding: 10px;
+				font-size: 9pt;
+				font-weight: 300;
+				-webkit-box-shadow: 0px 0px 20px white;
+				z-index: 1000;
+
+				.tags-input {
+					input, span.tag {
+						padding: 3px 5px;
+						font-size: 9pt;
+					}
+
+					input {
+						border: none;
+						outline: none;
+
+						&::-webkit-input-placeholder {
+							color: $lighter-gray-color;
+						}
+					}
+
+					span.tag {
+						border-radius: 8px;
+						background-color: $tag-bg-color;
+						// border: 1px solid $tag-bg-color;
+						color: $tag-color;
+						margin-right: 4px;
+						cursor: pointer;
+
+						transition: background-color 0.1s, border-color 0.1s;
+
+						&:hover, &.selected {
+							background-color: $tag-bg-color-hover;
+							border-color: $tag-bg-color-hover;
+						}
+
+						&.selected {
+							border-color: darken($tag-bg-color-hover, 5%);
+						}
+					}
+				}
+			}
+		} 
+		// End editor
+
+		#preview {
+			height: 100%;
+			float: right;
+			border-left: 1px solid #eee;
+		}
+		// End preview
+
+		#empty-note {
+			margin: 0;
+			padding: 30px;
+
+			font-size: 28pt;
+			font-weight: 300;
+			color: $lighter-gray-color;
+
+			text-align: center;
+			width: 100%;
+			// height: 100%;
+			display: flex;
+			justify-content: center;
+
+			align-items: center;
+
+			span {
+				display: none;
+
+				a {
+					color: $light-gray-color;
+					transition: color 0.15s;
+
+					&:hover {
+						color: $gray-color;
+					}
+				}
+			}
+			// z-index: 1;
+		}
+		// End empty note
+
+		.markdown-body {
+			box-sizing: border-box;
+			min-width: 200px;
+			// max-width: 980px;
+			// margin: 0 auto;
+			padding: 30px;
+			// padding-top: 40px;
+		}
+
+		#command-palette {
+			display: none;
 			position: absolute;
 			z-index: 1000;
-			background-color: white;
+			padding: 40px;
+			box-sizing: border-box;
+
 			width: 100%;
-			color: $light-gray-color;
-			font-size: 8pt;
-			padding: 10px;
-		}
+			height: 100%;
+			background-color: rgba(255,255,255,0.6);
 
-		#editor-textarea {
-			flex: 1;
-			margin: 0;
+			input[type="text"] {
+				padding: 16px;
+				box-sizing: border-box;
+				width: 100%;
+				border: none;
+				font-size: 20pt;
+				font-weight: 300;
 
-			// position: absolute;
-			// left: 0;
-			// right: 0;
-			// bottom: 0;
-			// top: 0;
-			// margin: 0;
-		}
-
-		#tags-editor {
-			$tag-bg-color: transparentize($brand-color, 0.8);
-			$tag-bg-color-hover: transparentize($brand-color, 0.5);
-			$tag-color: transparentize(darken($brand-color, 50%), 0.5);
-
-			background: none;
-			padding: 10px;
-			font-size: 9pt;
-			font-weight: 300;
-			-webkit-box-shadow: 0px 0px 20px white;
-			z-index: 1000;
-
-			.tags-input {
-				input, span.tag {
-					padding: 3px 5px;
-					font-size: 9pt;
-				}
-
-				input {
-					border: none;
-					outline: none;
-
-					&::-webkit-input-placeholder {
-						color: $lighter-gray-color;
-					}
-				}
-
-				span.tag {
-					border-radius: 8px;
-					background-color: $tag-bg-color;
-					// border: 1px solid $tag-bg-color;
-					color: $tag-color;
-					margin-right: 4px;
-					cursor: pointer;
-
-					transition: background-color 0.1s, border-color 0.1s;
-
-					&:hover, &.selected {
-						background-color: $tag-bg-color-hover;
-						border-color: $tag-bg-color-hover;
-					}
-
-					&.selected {
-						border-color: darken($tag-bg-color-hover, 5%);
-					}
-				}
+				background-color: white;
+				box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 			}
+
 		}
-	}
+		// end command palette
+	} // End main
 
-	#command-palette {
-		display: none;
-		position: absolute;
-		z-index: 1000;
-		margin: 10px;
-
-		input[type="text"] {
-			padding: 10px;
-			width: 100%;
-			border: none;
-			font-size: 16pt;
-		}
-
-		background-color: white;
-		box-shadow: 0px 0px 7px #aaa;
-		// width: 90%;
-		top: 0;
-		left: 0;
-		right: 0;
-		// bottom: 0;
-	}
-
-
-	#preview {
-		height: 100%;
-		float: right;
-		border-left: 1px solid #eee;
-	}
-
-	#empty-note {
-		margin: 0;
-		padding: 30px;
-
-		font-size: 28pt;
-		font-weight: 300;
-		color: $lighter-gray-color;
-
-		text-align: center;
-		width: 100%;
-		// height: 100%;
-		display: flex;
-		justify-content: center;
-
-		align-items: center;
-
-		span {
-			display: none;
-
-			a {
-				color: $light-gray-color;
-				transition: color 0.15s;
-
-				&:hover {
-					color: $gray-color;
-				}
-			}
-		}
-		// z-index: 1;
-	}
-
-	.markdown-body {
-		box-sizing: border-box;
-		min-width: 200px;
-		// max-width: 980px;
-		// margin: 0 auto;
-		padding: 30px;
-		// padding-top: 40px;
-	}
 
 	#sidebar {
 		flex: 0 0 150px;
@@ -363,17 +377,23 @@ body {
 		#search-note {
 			// position: absolute;
 			// bottom: 0;
-			height: 30px;
+			// height: 30px;
 			background: none;
 			border: none;
-			border-top: 1px solid rgba(0,0,0,0.12);
-			border-radius: 4px;
-			padding: 8px;
+			padding: 10px 10px 10px 5px;
 			font-size: 9pt;
-			box-sizing: border-box;
+			// box-sizing: border-box;
 			color: $light-gray-color;
+			font-weight: 300;
+
+			background-color: rgba(0,0,0,0.04);
 
 			transition: text-align 1s;
+
+			&::-webkit-search-cancel-button {
+				height: 20px;
+				width: 20px;
+			}
 
 			&::-webkit-input-placeholder { 
 				text-align:center;

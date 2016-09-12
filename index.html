@@ -34,18 +34,22 @@
 				<span id="note-list-label"><i class="fa fa-sticky-note-o"></i> ALL NOTES</span>
 				<!-- <span id="note-list-label"></span> -->
 				<ul></ul>
-				<!-- <input type="search" id="search-note" placeholder="Search" /> -->
+				<input type="search" id="search-note" placeholder="Search" />
 			</nav>
-			<main id="editor">
-				<pre id="editor-textarea"></pre>
-				<div id="tags-editor"> </div>
+			<main>
+				<div id="editor">
+					<pre id="editor-textarea"></pre>
+					<!-- <div id="tags-editor"> </div> -->
+				</div>
+				<section id="preview" class="markdown-body">
+				</section>
+				<section id="empty-note">
+					<span>No note selected. Why not <a href="#">create one</a>?</span>
+				</section>
+	
+				<!-- Command palette -->
+				<div id="command-palette"><input type="text" placeholder="Search" /></div>
 			</main>
-			<section id="preview" class="markdown-body">
-			</section>
-			<div id="command-palette"><input type="text" placeholder="Search" /></div>
-			<section id="empty-note">
-				<span>No note selected. Why not <a href="#">create one</a>?</span>
-			</section>
 		</div>
 		<script src="js/ace/ace.js"></script>
 		<script src="js/app.js"></script>

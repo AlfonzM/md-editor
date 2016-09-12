@@ -22,6 +22,7 @@ var notesToDisplay = [];
 var tags = [];
 var syntaxes = [];
 var currentNote;
+var currentNoteListType;
 
 var $editor,
 $editorTextArea,
@@ -62,8 +63,8 @@ function initAce() {
 
 	editor.container.style.lineHeight = 1.5;
 	editor.$blockScrolling = Infinity;
-	editor.renderer.setScrollMargin(30, 30);
-	editor.renderer.setPadding(20);
+	editor.renderer.setScrollMargin(50, 30);
+	editor.renderer.setPadding(30);
 	
 	editor.setOptions({
 		showGutter: false,
@@ -91,6 +92,7 @@ function initDB(){
 
 function initNotes(){
 	fetchNotesFromDB();
+	currentNoteListType = 'all';
 	notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
 }
 
@@ -118,15 +120,20 @@ function initSidebar() {
 }
 
 function initSearchbox() {
-	$('input#search-note').on('search change paste keyup', function(){
+	$('input#search-note').on('input', function(){
 		var searchVal = $(this).val();
-		// alert('qwe');
 		search(searchVal);
 	})
 	.keyup(function(e){
-		if(e.keyCode == 27){
+		// press ESC or Enter
+		if(e.keyCode == 27 || e.keyCode == 13){
 			$(this).blur();
 			editor.focus();
+		}
+
+		// press ESC
+		if(e.keyCode == 27){
+			search('');
 		}
 	});
 }
@@ -164,7 +171,7 @@ function initEditorAndPreviewWindow() {
 function initEmptyNote() {
 	$emptyNote.find('span').show();
 
-	$emptyNote.on('click', function(){
+	$emptyNote.find('span a').on('click', function(){
 		createNewNote();
 	});
 }
@@ -277,21 +284,30 @@ function selectTag(e){
 
 // SIDEBAR ----------------
 
+// called on click notelist type element in the sidebar
 function selectNoteListType($noteListType){
 	var noteListType = $noteListType.data('note-type');
 	filterNoteListType(noteListType, $noteListType);
 }
 
+// programatically select/filter notes by note list type
 function filterNoteListType(noteListType, $noteListType = null){
+	currentNoteListType = noteListType;
+
 	$('#sidebar ul li.note-list-type.active').removeClass('active');
 	
 	if(!$noteListType){
-		$noteListType = $('ul.notes-list li[data-note-type=' + noteListType + ']');
+		$noteListType = $('ul.notes-list li[data-note-type=' + currentNoteListType + ']');
 	}
 
 	setNoteListTypeLabel($noteListType[0].innerHTML);
 	$noteListType.addClass('active');
 
+	fetchNotesToDisplayByNoteListType(currentNoteListType);
+	initNoteList();
+}
+
+function fetchNotesToDisplayByNoteListType(noteListType){
 	switch(noteListType) {
 		case 'all notes':
 		notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
@@ -325,7 +341,6 @@ function filterNoteListType(noteListType, $noteListType = null){
 		notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
 		break;
 	}
-	initNoteList();
 }
 
 // SIDEBAR TAGS LIST ----------------
@@ -457,7 +472,7 @@ function displayNoteToEditor(note){
 	setEditorSyntax(note.syntax);
 
 	// Set tags
-	initTags(note.tags);
+	// initTags(note.tags);
 	// [].forEach.call($('input[type="tags"]'), tagsInput);
 
 	// Toggle preview based on saved preview setting
@@ -547,12 +562,18 @@ function favoriteNote($noteElement){
 // SEARCH -------------------
 
 function search(searchTerm){
-	notes = db.get('notes').filter(function(el){
-		return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 && el.deleted == 0;
-	}).sortBy('updated_at').value();
+	setNoteListTypeLabel('<i class="fa fa-search"></i> SEARCH: <b>' + searchTerm + '</b>');
+
+	if(searchTerm == ''){
+		// fetchNotesToDisplayByNoteListType(currentNoteListType);
+		filterNoteListType(currentNoteListType);
+	} else {
+		notesToDisplay = db.get('notes').filter(function(el){
+			return el.body.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 && el.deleted == 0;
+		}).sortBy('updated_at').value();
+	}
 
 	initNoteList(false);
-	$commandPaletteInput.focus();
 }
 
 function showCommandPalette() {
@@ -592,6 +613,11 @@ ipcRenderer.on('toggleSidebar', function(event){
 	editor.resize(true)
 });
 
+ipcRenderer.on('toggleNoteList', function(event){
+	$('#note-list').toggle();
+	editor.resize(true)
+});
+
 ipcRenderer.on('toggleEditor', function(event){
 	// $editor.toggle()
 	// editor.resize(true)
@@ -610,8 +636,8 @@ ipcRenderer.on('previousNote', function(event){
 });
 
 ipcRenderer.on('focusSearchBox', function(event){
-	showCommandPalette();
-	// $("input#search-note").focus()
+	// showCommandPalette();
+	$("input#search-note").focus()
 });
 
 ipcRenderer.on('createNewNote', function(event){

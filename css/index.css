@@ -591,95 +591,103 @@ body {
   display: flex;
   width: 100%;
   height: 100%; }
-  .container #editor, .container #preview, .container #note-list {
-    box-sizing: border-box;
-    overflow: scroll; }
-  .container #editor, .container #preview {
-    flex: 1;
-    display: inline; }
-  .container #editor {
-    position: relative;
+  .container main {
     display: flex;
-    flex-direction: column; }
-    .container #editor #controls {
+    width: 100%;
+    height: 100%;
+    position: relative; }
+    .container main #editor, .container main #preview, .container main #note-list {
+      box-sizing: border-box;
+      overflow: scroll; }
+    .container main #editor, .container main #preview {
+      flex: 1;
+      display: inline; }
+    .container main #editor {
+      position: relative;
+      display: flex;
+      flex-direction: column; }
+      .container main #editor #controls {
+        position: absolute;
+        z-index: 1000;
+        background-color: white;
+        width: 100%;
+        color: #888888;
+        font-size: 8pt;
+        padding: 10px; }
+      .container main #editor #editor-textarea {
+        flex: 1;
+        margin: 0; }
+      .container main #editor #tags-editor {
+        background: none;
+        padding: 10px;
+        font-size: 9pt;
+        font-weight: 300;
+        -webkit-box-shadow: 0px 0px 20px white;
+        z-index: 1000; }
+        .container main #editor #tags-editor .tags-input input, .container main #editor #tags-editor .tags-input span.tag {
+          padding: 3px 5px;
+          font-size: 9pt; }
+        .container main #editor #tags-editor .tags-input input {
+          border: none;
+          outline: none; }
+          .container main #editor #tags-editor .tags-input input::-webkit-input-placeholder {
+            color: #bbbbbb; }
+        .container main #editor #tags-editor .tags-input span.tag {
+          border-radius: 8px;
+          background-color: rgba(152, 221, 222, 0.2);
+          color: rgba(29, 89, 90, 0.5);
+          margin-right: 4px;
+          cursor: pointer;
+          transition: background-color 0.1s, border-color 0.1s; }
+          .container main #editor #tags-editor .tags-input span.tag:hover, .container main #editor #tags-editor .tags-input span.tag.selected {
+            background-color: rgba(152, 221, 222, 0.5);
+            border-color: rgba(152, 221, 222, 0.5); }
+          .container main #editor #tags-editor .tags-input span.tag.selected {
+            border-color: rgba(133, 215, 216, 0.5); }
+    .container main #preview {
+      height: 100%;
+      float: right;
+      border-left: 1px solid #eee; }
+    .container main #empty-note {
+      margin: 0;
+      padding: 30px;
+      font-size: 28pt;
+      font-weight: 300;
+      color: #bbbbbb;
+      text-align: center;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center; }
+      .container main #empty-note span {
+        display: none; }
+        .container main #empty-note span a {
+          color: #888888;
+          transition: color 0.15s; }
+          .container main #empty-note span a:hover {
+            color: #555555; }
+    .container main .markdown-body {
+      box-sizing: border-box;
+      min-width: 200px;
+      padding: 30px; }
+    .container main #command-palette {
+      display: none;
       position: absolute;
       z-index: 1000;
-      background-color: white;
+      padding: 40px;
+      box-sizing: border-box;
       width: 100%;
-      color: #888888;
-      font-size: 8pt;
-      padding: 10px; }
-    .container #editor #editor-textarea {
-      flex: 1;
-      margin: 0; }
-    .container #editor #tags-editor {
-      background: none;
-      padding: 10px;
-      font-size: 9pt;
-      font-weight: 300;
-      -webkit-box-shadow: 0px 0px 20px white;
-      z-index: 1000; }
-      .container #editor #tags-editor .tags-input input, .container #editor #tags-editor .tags-input span.tag {
-        padding: 3px 5px;
-        font-size: 9pt; }
-      .container #editor #tags-editor .tags-input input {
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.6); }
+      .container main #command-palette input[type="text"] {
+        padding: 16px;
+        box-sizing: border-box;
+        width: 100%;
         border: none;
-        outline: none; }
-        .container #editor #tags-editor .tags-input input::-webkit-input-placeholder {
-          color: #bbbbbb; }
-      .container #editor #tags-editor .tags-input span.tag {
-        border-radius: 8px;
-        background-color: rgba(152, 221, 222, 0.2);
-        color: rgba(29, 89, 90, 0.5);
-        margin-right: 4px;
-        cursor: pointer;
-        transition: background-color 0.1s, border-color 0.1s; }
-        .container #editor #tags-editor .tags-input span.tag:hover, .container #editor #tags-editor .tags-input span.tag.selected {
-          background-color: rgba(152, 221, 222, 0.5);
-          border-color: rgba(152, 221, 222, 0.5); }
-        .container #editor #tags-editor .tags-input span.tag.selected {
-          border-color: rgba(133, 215, 216, 0.5); }
-  .container #command-palette {
-    display: none;
-    position: absolute;
-    z-index: 1000;
-    margin: 10px;
-    background-color: white;
-    box-shadow: 0px 0px 7px #aaa;
-    top: 0;
-    left: 0;
-    right: 0; }
-    .container #command-palette input[type="text"] {
-      padding: 10px;
-      width: 100%;
-      border: none;
-      font-size: 16pt; }
-  .container #preview {
-    height: 100%;
-    float: right;
-    border-left: 1px solid #eee; }
-  .container #empty-note {
-    margin: 0;
-    padding: 30px;
-    font-size: 28pt;
-    font-weight: 300;
-    color: #bbbbbb;
-    text-align: center;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center; }
-    .container #empty-note span {
-      display: none; }
-      .container #empty-note span a {
-        color: #888888;
-        transition: color 0.15s; }
-        .container #empty-note span a:hover {
-          color: #555555; }
-  .container .markdown-body {
-    box-sizing: border-box;
-    min-width: 200px;
-    padding: 30px; }
+        font-size: 20pt;
+        font-weight: 300;
+        background-color: white;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
   .container #sidebar {
     flex: 0 0 150px;
     background-color: rgba(0, 0, 0, 0.05);
@@ -783,16 +791,17 @@ body {
         margin: 0;
         padding: 0; }
     .container #note-list #search-note {
-      height: 30px;
       background: none;
       border: none;
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 4px;
-      padding: 8px;
+      padding: 10px 10px 10px 5px;
       font-size: 9pt;
-      box-sizing: border-box;
       color: #888888;
+      font-weight: 300;
+      background-color: rgba(0, 0, 0, 0.04);
       transition: text-align 1s; }
+      .container #note-list #search-note::-webkit-search-cancel-button {
+        height: 20px;
+        width: 20px; }
       .container #note-list #search-note::-webkit-input-placeholder {
         text-align: center; }
       .container #note-list #search-note:focus::-webkit-input-placeholder {
