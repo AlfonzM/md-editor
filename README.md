@@ -29,7 +29,7 @@ __Notes__
 - [x] Delete note
 - [ ] Open file and add to list (import)
 - [ ] Save As file (export)
-- [x] Add tags to notes
+- [ ] Add/Remove tags to notes
 - [ ] Select multiple notes in notelist? (for deleting or favoriting)
 - [x] Show "No note selected, create a new note" if notes list is empty
 - [x] Search notes
@@ -81,3 +81,4 @@ __Keyboard Shortcuts__
 __Known bugs__
 - [ ] Weird tag editor width when switching from notes with and without Preview pane
 - [ ] Fix lag on holding paste (Cmd+V)
+- [ ] Sometimes editor is not word wrapping (with preview pane on)

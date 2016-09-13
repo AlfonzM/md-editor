@@ -43,5 +43,9 @@
       "syntax": "markdown",
       "preview_enabled": true
     }
-  ]
+  ],
+  "settings": {
+    "show_sidebar": true,
+    "show_notelist": true
+  }
 }
