@@ -6,7 +6,6 @@ const moment = require('moment');
 const electron = require('electron');
 const shell = electron.shell;
 const ipcRenderer = electron.ipcRenderer;
-const tagsInput = require('tags-input');
 const syntaxesList = require('./js/syntaxes').syntaxes;
 const _ = require('lodash');
 
@@ -31,6 +30,8 @@ $commandPalette,
 $commandPaletteInput,
 $emptyNote,
 $noteList,
+$tagsSection,
+$tagEditor,
 $sidebar;
 
 $(document).ready(function (){
@@ -63,6 +64,9 @@ function cacheDom() {
 	$commandPalette = $("#command-palette");
 	$commandPaletteInput = $("#command-palette").find('input[type="text"]');
 	$emptyNote = $("#empty-note");
+
+	$tagsSection = $("#tag-editor");
+	$tagEditor = $tagsSection.find("input[type='text']");
 }
 
 function initAce() {
@@ -225,13 +229,18 @@ function setBinds() {
 }
 
 function initTags(tags){
-	$('#tags-editor').html('<input id="tags" type="tags" placeholder="Add a tag" value=' + tags.join() + '>');
+	// return;
+	// $('#tags-editor').html('<input id="tags" type="tags" placeholder="add..." value=' + tags.join() + '>');
 
-	[].forEach.call($('input[type="tags"]'), tagsInput);
+	$tagsSection.find('span.tag').remove()
 
-	let $tags = $('#tags')[0];
-	$tags.addEventListener('input', inputTags);
-	$tags.addEventListener('change', changeTags);
+	tags.map(function(tag){
+		$('<span class="tag">' + tag + '</span>').insertBefore($tagEditor);
+	})
+
+	// let $tags = $('#tags')[0];
+	// $tags.addEventListener('input', inputTags);
+	// $tags.addEventListener('change', changeTags);
 
 	changeTags();
 }
@@ -448,6 +457,36 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 		editor.focus();
 	}
 
+	$tagsSection.on('click', function(e){
+		$tagEditor.focus();
+	})
+
+	$tagsSection.find('span.tag').on('click', function(e){
+		e.stopPropagation()
+	})
+
+	$tagEditor.on('input', function(e) {
+		const size = $(this).val().length
+		$(this).attr('size', (size > 0) ? size + 1 : 9)
+	})
+
+	// submit new tag
+	$tagEditor.on('keydown', function(e){
+		// if empty, return
+		if($(this).val() == '') {
+			return
+		}
+
+		var keycode = (e.keyCode ? e.keyCode : e.which)
+		if(keycode == '13'){
+			e.preventDefault()
+			currentNote.tags.push($(this).val())
+			
+			$(this).val(null)
+			$(this).trigger('input')
+		}
+	})
+
 	// if(offset + 54 + 20 > window.innerHeight){
 	// 	$noteList.find('ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
 	// }
@@ -489,8 +528,8 @@ function displayNoteToEditor(note){
 	setEditorSyntax(note.syntax);
 
 	// Set tags
+	console.log(note.tags)
 	initTags(note.tags);
-	// [].forEach.call($('input[type="tags"]'), tagsInput);
 
 	// Toggle preview based on saved preview setting
 	(currentNote.preview_enabled) ? $preview.show() : $preview.hide();

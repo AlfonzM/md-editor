@@ -6,6 +6,7 @@ $text-color: #222222;
 $gray-color: #555555;
 $light-gray-color: lighten($gray-color, 20%);
 $lighter-gray-color: lighten($light-gray-color, 20%);
+$lightest-gray-color: lighten($lighter-gray-color, 20%);
 
 html, body {
 	width: 100%;
@@ -44,6 +45,8 @@ body {
 		height: 100%;
 		position: relative;
 
+		flex: 1;
+
 		#editor, #preview, #note-list {
 			box-sizing: border-box;
 			overflow: scroll;
@@ -81,63 +84,107 @@ body {
 				// margin: 0;
 			}
 
-			#tags-editor {
-				$tag-bg-color: transparentize($brand-color, 0.8);
-				$tag-bg-color-hover: transparentize($brand-color, 0.5);
-				$tag-color: transparentize(darken($brand-color, 50%), 0.5);
-
-				background: none;
-				padding: 10px;
-				font-size: 9pt;
-				font-weight: 300;
-				-webkit-box-shadow: 0px 0px 20px white;
+			#tags-editor{
+				position: absolute;
+				width: 100%;
+				background:gray;
+				bottom: 0;
 				z-index: 1000;
+			}
 
-				.tags-input {
-					input, span.tag {
-						padding: 3px 5px;
-						font-size: 9pt;
-					}
+			.tags-input{
+				display:inline-block;
+				// padding:0 2px;
+				background:red;
+				max-width: 100%;
+				// border:1px solid #CCC;
+				// border-radius:2px;
+				// box-shadow:inset 0 1px 2px rgba(0,0,0,.1)
+			}
+			.tags-input .tag{
+				display:inline-block;
+				background:#EEE;
+				color:#444;
+				padding:0 4px;
+				// margin:2px;
+				border:1px solid #CCC;
+				border-radius:2px;
+				font:inherit;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+				cursor:pointer;
+				transition:all .1s ease
+			}
+			.tags-input .tag.selected{
+				background-color:#777;
+				border-color:#777;
+				color:#EEE
+			}
+			.tags-input .tag.dupe{
+				-webkit-transform:scale3d(1.2,1.2,1.2);
+				transform:scale3d(1.2,1.2,1.2);
+				background-color:#FCC;
+				border-color:#700
+			}
+			.tags-input input{
+				-webkit-appearance:none!important;
+				-moz-appearance:none!important;
+				appearance:none!important;
+				display:inline-block!important;
+				padding:3px;
+				margin:0!important;
+				background:0 0!important;
+				border:none!important;
+				box-shadow:none!important;
+				font:inherit!important;
+				font-size:100%!important;
+				outline:0!important
+			}
+			.tags-input .selected~input{
+				opacity:.3
+			}
 
-					input {
-						border: none;
-						outline: none;
+			#tag-editor{
+				margin-top: 5px;
+				padding: 5px;
+				cursor: text;
 
-						&::-webkit-input-placeholder {
-							color: $lighter-gray-color;
-						}
-					}
+				* { 
+					font-size: 9pt; 
+				}
 
-					span.tag {
-						border-radius: 8px;
-						background-color: $tag-bg-color;
-						// border: 1px solid $tag-bg-color;
-						color: $tag-color;
-						margin-right: 4px;
+				span.tag {
+					background-color: darken($lightest-gray-color,0%);
+					// border: 1px solid lighten($gray-color, 5%);
+					padding: 3px 5px;
+					color: darken($lighter-gray-color,8%);
+					font-weight: 300;
+					margin-right: 2px;
+					line-height: 22pt;
+					border-radius: 5px;
+
+					&:hover{
 						cursor: pointer;
-
-						transition: background-color 0.1s, border-color 0.1s;
-
-						&:hover, &.selected {
-							background-color: $tag-bg-color-hover;
-							border-color: $tag-bg-color-hover;
-						}
-
-						&.selected {
-							border-color: darken($tag-bg-color-hover, 5%);
-						}
+						text-decoration: underline;
 					}
 				}
+
+				input {
+					background: none;
+					border: none;
+					outline: none;
+				}
+
 			}
-		} 
-		// End editor
+		} // End editor
 
 		#preview {
 			height: 100%;
 			float: right;
 			border-left: 1px solid #eee;
-		}
-		// End preview
+		} // End preview
 
 		#empty-note {
 			margin: 0;
@@ -266,7 +313,10 @@ body {
 		// padding-top: 23px;
 		position: relative;
 
-		flex: 0 0 200px;
+		$noteListWidth: 200px;
+
+		flex: 0 0 $noteListWidth;
+		max-width: $noteListWidth;
 		background-color: rgba(0,0,0,0.025);
 
 		display: flex;
