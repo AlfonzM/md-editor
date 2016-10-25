@@ -150,6 +150,8 @@ body {
 				margin-top: 5px;
 				padding: 5px;
 				cursor: text;
+				width: 100%;
+				box-sizing: border-box;
 
 				* { 
 					font-size: 9pt; 
@@ -159,15 +161,21 @@ body {
 					background-color: darken($lightest-gray-color,0%);
 					// border: 1px solid lighten($gray-color, 5%);
 					padding: 3px 5px;
-					color: darken($lighter-gray-color,8%);
+					color: darken($lighter-gray-color,5%);
 					font-weight: 300;
 					margin-right: 2px;
 					line-height: 22pt;
 					border-radius: 5px;
+	
+					white-space: nowrap;
 
 					&:hover{
 						cursor: pointer;
-						text-decoration: underline;
+					}
+
+					&:hover, &.highlight{
+						background-color: darken($lightest-gray-color,5%);
+						color: darken($lighter-gray-color,20%);
 					}
 				}
 

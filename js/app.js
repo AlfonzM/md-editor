@@ -46,6 +46,7 @@ $(document).ready(function (){
 	initCommandPalette();
 	initEditorAndPreviewWindow();
 	initEmptyNote();
+	initTagsEditor()
 	setBinds();
 
 	editor.getSession().on('changeScrollTop', function(scroll){
@@ -228,21 +229,73 @@ function setBinds() {
 	});
 }
 
-function initTags(tags){
-	// return;
-	// $('#tags-editor').html('<input id="tags" type="tags" placeholder="add..." value=' + tags.join() + '>');
-
-	$tagsSection.find('span.tag').remove()
-
-	tags.map(function(tag){
-		$('<span class="tag">' + tag + '</span>').insertBefore($tagEditor);
+function initTagsEditor(){
+	$tagsSection.on('click', function(e){
+		$tagEditor.focus();
 	})
 
+	$tagsSection.find('span.tag').on('click', function(e){
+		e.stopPropagation()
+	})
+
+	$tagEditor.on('input', function(e) {
+		const size = $(this).val().length
+		$(this).attr('size', (size > 0) ? size + 1 : 9)
+	})
+
+	// submit new tag
+	$tagEditor.on('keydown', function(e){
+		var keycode = (e.keyCode ? e.keyCode : e.which)
+		var val = $(this).val();
+
+		if(keycode == '13'){ // enter
+			e.preventDefault()
+			// if empty, return
+			if(val == '') {
+				return
+			} else {
+				addTagToCurrentNote(val)
+			}
+		} else {
+			var $lastTag = $tagsSection.find('span.tag:last')
+
+			if(keycode == '8'){ // backspace
+				if(val == '') {
+					// if first backspace, highlight the last tag
+
+					if(!$lastTag.hasClass('highlight')){
+						$lastTag.addClass('highlight')
+					} else {
+						currentNote.tags.pop()
+						saveCurrentNoteTags()
+						renderCurrentNoteTags()
+					}
+				}
+			} else {
+				if($lastTag.hasClass('highlight')){
+					$lastTag.removeClass('highlight')
+				}
+			}
+		}
+	})
+}
+
+function initTags(tags = null){
 	// let $tags = $('#tags')[0];
 	// $tags.addEventListener('input', inputTags);
 	// $tags.addEventListener('change', changeTags);
 
-	changeTags();
+	// changeTags();
+}
+
+function renderCurrentNoteTags(tags = null){
+	tags = (!tags) ? currentNote.tags : tags
+
+	$tagsSection.find('span.tag').remove()
+	tags.map(function(tag){
+		var $newTag = $('<span class="tag">' + tag + '</span>').insertBefore($tagEditor);
+		$newTag.bind('click', selectTag)
+	})
 }
 
 // EDITOR ---------------------
@@ -287,20 +340,20 @@ function inputTags(e){
 
 // When a tag is added or removed
 function changeTags(e){
-	$('span.tag').bind('click', selectTag);
+	// $('span.tag').bind('click', selectTag);
 
-	if(!this) {
-		return;
-	}
+	// if(!this) {
+	// 	return;
+	// }
 
-	var tagsArray = this.value.split(',');
+	// var tagsArray = this.value.split(',');
 
-	db.get('notes').find({id:currentNote.id}).assign({
-		tags: tagsArray,
-		updated_at: new Date().getTime()
-	}).value()
+	// db.get('notes').find({id:currentNote.id}).assign({
+	// 	tags: tagsArray,
+	// 	updated_at: new Date().getTime()
+	// }).value()
 
-	refreshTagsList();
+	// refreshTagsList();
 }
 
 function selectTag(e){
@@ -321,7 +374,7 @@ function filterNoteListType(noteListType, $noteListType = null){
 	currentNoteListType = noteListType;
 
 	$('#sidebar ul li.note-list-type.active').removeClass('active');
-	
+
 	if(!$noteListType){
 		$noteListType = $('ul.notes-list li[data-note-type=' + currentNoteListType + ']');
 	}
@@ -329,11 +382,11 @@ function filterNoteListType(noteListType, $noteListType = null){
 	setNoteListTypeLabel($noteListType[0].innerHTML);
 	$noteListType.addClass('active');
 
-	fetchNotesToDisplayByNoteListType(currentNoteListType);
+	fetchNotesToDisplayByNoteListType(currentNoteListType, $noteListType);
 	initNoteList();
 }
 
-function fetchNotesToDisplayByNoteListType(noteListType){
+function fetchNotesToDisplayByNoteListType(noteListType, $noteListType = null){
 	switch(noteListType) {
 		case 'all notes':
 		notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
@@ -372,8 +425,6 @@ function fetchNotesToDisplayByNoteListType(noteListType){
 // SIDEBAR TAGS LIST ----------------
 
 function refreshTagsList() {
-	// console.log('refresh tags');
-
 	$('#sidebar ul.tags-list').html('');
 
 	tags = _.sortBy(_.uniq(_.flatten(_.map(notes, 'tags'))))
@@ -456,40 +507,25 @@ function selectANoteFromNoteList($noteElement, focusEditor = true) {
 	if(focusEditor){
 		editor.focus();
 	}
+}
 
-	$tagsSection.on('click', function(e){
-		$tagEditor.focus();
-	})
+function addTagToCurrentNote(tag){
+	$tagEditor.val(null)
+	$tagEditor.trigger('input')
 
-	$tagsSection.find('span.tag').on('click', function(e){
-		e.stopPropagation()
-	})
+	if(!currentNote.tags.includes(tag)){
+		currentNote.tags.push(tag)
+		saveCurrentNoteTags()
+		renderCurrentNoteTags()
+	}
+}
 
-	$tagEditor.on('input', function(e) {
-		const size = $(this).val().length
-		$(this).attr('size', (size > 0) ? size + 1 : 9)
-	})
+function saveCurrentNoteTags(){
+	db.get('notes').find({id:currentNote.id}).assign({
+		tags: currentNote.tags,
+	}).value()
 
-	// submit new tag
-	$tagEditor.on('keydown', function(e){
-		// if empty, return
-		if($(this).val() == '') {
-			return
-		}
-
-		var keycode = (e.keyCode ? e.keyCode : e.which)
-		if(keycode == '13'){
-			e.preventDefault()
-			currentNote.tags.push($(this).val())
-			
-			$(this).val(null)
-			$(this).trigger('input')
-		}
-	})
-
-	// if(offset + 54 + 20 > window.innerHeight){
-	// 	$noteList.find('ul').animate({scrollTop: $(window).scrollTop() + $noteElement.offset().top}, 200);
-	// }
+	refreshTagsList()
 }
 
 function showEmptyNote(){
@@ -529,7 +565,7 @@ function displayNoteToEditor(note){
 
 	// Set tags
 	console.log(note.tags)
-	initTags(note.tags);
+	renderCurrentNoteTags(note.tags);
 
 	// Toggle preview based on saved preview setting
 	(currentNote.preview_enabled) ? $preview.show() : $preview.hide();

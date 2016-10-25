@@ -669,20 +669,25 @@ body {
       .container main #editor #tag-editor {
         margin-top: 5px;
         padding: 5px;
-        cursor: text; }
+        cursor: text;
+        width: 100%;
+        box-sizing: border-box; }
         .container main #editor #tag-editor * {
           font-size: 9pt; }
         .container main #editor #tag-editor span.tag {
           background-color: #eeeeee;
           padding: 3px 5px;
-          color: #a7a7a7;
+          color: #aeaeae;
           font-weight: 300;
           margin-right: 2px;
           line-height: 22pt;
-          border-radius: 5px; }
+          border-radius: 5px;
+          white-space: nowrap; }
           .container main #editor #tag-editor span.tag:hover {
-            cursor: pointer;
-            text-decoration: underline; }
+            cursor: pointer; }
+          .container main #editor #tag-editor span.tag:hover, .container main #editor #tag-editor span.tag.highlight {
+            background-color: #e1e1e1;
+            color: #888888; }
         .container main #editor #tag-editor input {
           background: none;
           border: none;
