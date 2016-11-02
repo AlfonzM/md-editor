@@ -114,7 +114,7 @@ function initSettings() {
 function initNotes(){
 	fetchNotesFromDB();
 	currentNoteListType = 'all';
-	notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
+	notesToDisplay = getNotDeletedNotes();
 }
 
 function initNoteList(focusEditor = true) {
@@ -135,8 +135,7 @@ function initSidebar() {
 	refreshSyntaxesList();
 
 	$('#sidebar ul').on('click', 'li.note-list-type', function(){
-		var noteListType = $(this);
-		selectNoteListType(noteListType);
+		selectNoteListType($(this));
 	});
 }
 
@@ -192,6 +191,7 @@ function initEditorAndPreviewWindow() {
 function initEmptyNote() {
 	$emptyNote.find('span').show();
 
+	// on click "Why not create one?" link
 	$emptyNote.find('span a').on('click', function(){
 		createNewNote();
 	});
@@ -389,7 +389,7 @@ function filterNoteListType(noteListType, $noteListType = null){
 function fetchNotesToDisplayByNoteListType(noteListType, $noteListType = null){
 	switch(noteListType) {
 		case 'all notes':
-		notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
+		notesToDisplay = getNotDeletedNotes();
 		break;
 
 		case 'favorites':
@@ -417,7 +417,7 @@ function fetchNotesToDisplayByNoteListType(noteListType, $noteListType = null){
 		break;
 
 		default:
-		notesToDisplay = notes.filter(function(n){ return n.deleted == 0});
+		notesToDisplay = getNotDeletedNotes();
 		break;
 	}
 }
@@ -427,7 +427,7 @@ function fetchNotesToDisplayByNoteListType(noteListType, $noteListType = null){
 function refreshTagsList() {
 	$('#sidebar ul.tags-list').html('');
 
-	tags = _.sortBy(_.uniq(_.flatten(_.map(notes, 'tags'))))
+	tags = _.sortBy(_.uniq(_.flatten(_.map(notes.filter(function(n){ return n.deleted == 0 }), 'tags'))))
 
 	tags.map(function(tag){
 		addTagToTagsList(tag);
@@ -444,11 +444,25 @@ function refreshSyntaxesList() {
 
 	$('#sidebar ul.syntax-list').html('');
 
-	syntaxes = _.sortBy(_.uniq(_.map(notes, 'syntax')))
+	syntaxes = _.sortBy(_.uniq(_.map(notes.filter(function(n){ return n.deleted == 0 }), 'syntax')))
 
 	syntaxes.map(function(syntax){
 		addSyntaxToSyntaxesList(syntax);
 	})
+}
+
+function selectSyntaxForCurrentNote(syntax){
+	if(currentNote.syntax != syntax){
+		console.log('save')
+		db.get('notes').find({id:currentNote.id}).assign({
+			'syntax': syntax
+		}).value()
+	}
+
+	setEditorSyntax(syntax);
+	refreshSyntaxesList();
+
+	$sidebar.find('ul li.note-list-type[data-note-type-value="' + syntax + '"]').trigger('click');
 }
 
 function addSyntaxToSyntaxesList(syntax){
@@ -529,6 +543,10 @@ function saveCurrentNoteTags(){
 }
 
 function showEmptyNote(){
+	if(currentNoteListType == 'syntax'){
+		$sidebar.find('ul.notes-list li:first').trigger('click');
+	}
+
 	$emptyNote.show();
 	$editor.hide();
 	$preview.hide();
@@ -564,7 +582,6 @@ function displayNoteToEditor(note){
 	setEditorSyntax(note.syntax);
 
 	// Set tags
-	console.log(note.tags)
 	renderCurrentNoteTags(note.tags);
 
 	// Toggle preview based on saved preview setting
@@ -605,11 +622,26 @@ function createNewNote(){
 		'syntax': 'markdown',
 		'preview_enabled': true,
 	}
+
+	var newNoteSyntax = 'markdown'
+
+	switch(currentNoteListType){
+		case 'favorites':
+		newNote.favorited = 1;
+		break;
+
+		case 'syntax':
+		newNoteSyntax = $sidebar.find('ul.syntax-list li.note-list-type.active').attr('data-note-type-value');
+		break;
+	}
+
 	notes = db.get('notes').push(newNote).value()
 
 	addNoteToNoteList(newNote)
 	selectANoteFromNoteList($noteList.find('ul li:first'))
-	editor.focus();
+	editor.focus()
+
+	selectSyntaxForCurrentNote(newNoteSyntax)
 }
 
 function deleteNote($noteElement){
@@ -757,13 +789,10 @@ ipcRenderer.on('selectNoteListType', function(event, noteListType){
 });
 
 ipcRenderer.on('selectSyntax', function(event, syntax){
-	db.get('notes').find({id:currentNote.id}).assign({
-		'syntax': syntax
-	}).value()
-
-	setEditorSyntax(syntax);
-	refreshSyntaxesList();
-
-	// filterNoteListType();
-	$('#sidebar ul li.note-list-type[data-note-type-value="' + syntax + '"]').trigger('click');
+	selectSyntaxForCurrentNote(syntax)
 });
+
+// HELPER FUNCTIONS
+function getNotDeletedNotes(){
+	return notes.filter(function(n){ return n.deleted == 0});
+}

@@ -668,19 +668,20 @@ body {
         opacity: .3; }
       .container main #editor #tag-editor {
         margin-top: 5px;
-        padding: 5px;
+        padding: 0px 5px;
         cursor: text;
         width: 100%;
         box-sizing: border-box; }
         .container main #editor #tag-editor * {
           font-size: 9pt; }
+        .container main #editor #tag-editor span.tag, .container main #editor #tag-editor input {
+          padding: 3px 5px;
+          line-height: 22pt; }
         .container main #editor #tag-editor span.tag {
           background-color: #eeeeee;
-          padding: 3px 5px;
           color: #aeaeae;
           font-weight: 300;
           margin-right: 2px;
-          line-height: 22pt;
           border-radius: 5px;
           white-space: nowrap; }
           .container main #editor #tag-editor span.tag:hover {

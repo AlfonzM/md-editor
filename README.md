@@ -29,11 +29,11 @@ __Notes__
 - [x] Delete note
 - [ ] Open file and add to list (import)
 - [ ] Save As file (export)
-- [ ] Add/Remove tags to notes
+- [x] Add/Remove tags to notes
 - [ ] Select multiple notes in notelist? (for deleting or favoriting)
 - [x] Show "No note selected, create a new note" if notes list is empty
 - [x] Search notes
-- [ ] Search notes by tag/syntax
+- [ ] Search notes by tag/syntax (i.e. tag:webdev or syntax:python)
 
 __Editor__
 - [x] Auto save on type (no need to Save/Open files)
@@ -48,7 +48,6 @@ __Markdown Editor__
 - [ ] GitHub checklist markdown
 - [ ] Insert image / Drag image from Finder
 - [ ] "Copy to clipboard" button on code snippets
-- [ ] ~~Resize Preview window (draggable separator)~~
 
 __Sidebars__
 - [x] Filter by All Notes, Favorites, etc
@@ -59,8 +58,7 @@ __Sidebars__
 - [x] List available tags and syntaxes in sidebar
 
 __Format__
-- [ ] ~~Use external Markdown CSS theme~~
-- [ ] ~~Edit editor Font (font-size, font-family, line-height)~~
+- [ ] Edit editor Font (font-size, font-family, line-height)
 - [ ] Change font size
 - [ ] Select syntax highlighter themes
 

@@ -148,7 +148,7 @@ body {
 
 			#tag-editor{
 				margin-top: 5px;
-				padding: 5px;
+				padding: 0px 5px;
 				cursor: text;
 				width: 100%;
 				box-sizing: border-box;
@@ -157,14 +157,17 @@ body {
 					font-size: 9pt; 
 				}
 
+				span.tag, input {
+					padding: 3px 5px;
+					line-height: 22pt;
+				}
+
 				span.tag {
 					background-color: darken($lightest-gray-color,0%);
 					// border: 1px solid lighten($gray-color, 5%);
-					padding: 3px 5px;
 					color: darken($lighter-gray-color,5%);
 					font-weight: 300;
 					margin-right: 2px;
-					line-height: 22pt;
 					border-radius: 5px;
 	
 					white-space: nowrap;
