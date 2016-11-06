@@ -20,7 +20,7 @@
 					<li class="note-list-type" data-note-type="favorites"><i class="fa fa-star-o"></i> Favorites</li>
 					<li class="note-list-type" data-note-type="markdown"><i class="fa fa-font"></i> Markdown</li>
 					<li class="note-list-type" data-note-type="code"><i class="fa fa-code"></i> Code</li>
-					<li class="note-list-type" data-note-type="trash"><i class="fa fa-trash-o"></i> TRASH</li>
+					<li class="note-list-type" data-note-type="trash"><i class="fa fa-trash-o"></i> Trash</li>
 				</ul>
 				<ul class="syntax-list">
 				</ul>
@@ -28,10 +28,13 @@
 				</ul>
 			</aside>
 			<nav id="note-list">
-				<!-- <button id="btn-create-note" class="btn"><i class="icon ion-plus-round"></i> New note</button> -->
 				<!-- <span id="note-list-label"><i class="fa fa-search"></i> SEARCH: <b>PHP</b></span> -->
 				<!-- <span id="note-list-label"><i class="fa fa-tag"></i> PHP, WEBDEV NOTES</span> -->
-				<span id="note-list-label"><i class="fa fa-sticky-note-o"></i> ALL NOTES</span>
+				<div id="note-list-header">
+					<span id="note-list-label"><i class="fa fa-sticky-note-o"></i> ALL NOTES</span>
+					<span class="note-list-label-btn" id="add-new-note"><i class="icon ion-plus-round"></i></span>
+					<span class="note-list-label-btn" id="delete-all-notes"><i class="fa fa-trash"></i></span>
+				</div>
 				<!-- <span id="note-list-label"></span> -->
 				<ul></ul>
 				<input type="search" id="search-note" placeholder="Search" />

@@ -34,6 +34,11 @@ $tagsSection,
 $tagEditor,
 $sidebar;
 
+// note list header
+var $noteListLabel,
+$addNoteButton,
+$deleteAllTrashButton;
+
 $(document).ready(function (){
 	cacheDom();
 	initDB();
@@ -54,6 +59,9 @@ $(document).ready(function (){
 		$preview.scrollTop(scroll);
 		// console.log(scroll + 40);
 	});
+
+	// hide by default the delete all button in the note list header
+	$deleteAllTrashButton.hide();
 });
 
 function cacheDom() {
@@ -68,6 +76,11 @@ function cacheDom() {
 
 	$tagsSection = $("#tag-editor");
 	$tagEditor = $tagsSection.find("input[type='text']");
+
+	// note list
+	$noteListLabel = $('#note-list-label'),
+	$addNoteButton = $('#note-list-header span#add-new-note'),
+	$deleteAllTrashButton = $('#note-list-header span#delete-all-notes');
 }
 
 function initAce() {
@@ -200,7 +213,18 @@ function initEmptyNote() {
 function setBinds() {
 	// Input code editor change handler
 	editor.on('change', function(){
-		if(editor.curOp.docChanged && ["insertstring", "backspace", "cut", "paste", "indent"].includes(editor.curOp.command.name)) {
+		const changeActions = [
+			"undo",
+			"redo",
+			"insertstring",
+			"backspace",
+			"cut",
+			"paste",
+			"indent",
+			"outdent"
+		]
+
+		if(editor.curOp.docChanged && changeActions.includes(editor.curOp.command.name)) {
 			saveNote();
 			refreshOutput();
 		}
@@ -224,8 +248,13 @@ function setBinds() {
 	});
 
 	// on click create note button
-	$('button#btn-create-note').on('click', function(){
+	$addNoteButton.on('click', function(){
 		createNewNote();
+	});
+
+	// on click delete all trash notes button
+	$deleteAllTrashButton.on('click', function(){
+		deleteAllTrashNotes();
 	});
 }
 
@@ -256,6 +285,8 @@ function initTagsEditor(){
 			} else {
 				addTagToCurrentNote(val)
 			}
+		} else if (keycode == '27'){ // escape
+			editor.focus()
 		} else {
 			var $lastTag = $tagsSection.find('span.tag:last')
 
@@ -373,7 +404,7 @@ function selectNoteListType($noteListType){
 function filterNoteListType(noteListType, $noteListType = null){
 	currentNoteListType = noteListType;
 
-	$('#sidebar ul li.note-list-type.active').removeClass('active');
+	$sidebar.find('ul li.note-list-type.active').removeClass('active');
 
 	if(!$noteListType){
 		$noteListType = $('ul.notes-list li[data-note-type=' + currentNoteListType + ']');
@@ -387,6 +418,9 @@ function filterNoteListType(noteListType, $noteListType = null){
 }
 
 function fetchNotesToDisplayByNoteListType(noteListType, $noteListType = null){
+	$deleteAllTrashButton.hide();
+	$addNoteButton.show();
+
 	switch(noteListType) {
 		case 'all notes':
 		notesToDisplay = getNotDeletedNotes();
@@ -405,6 +439,8 @@ function fetchNotesToDisplayByNoteListType(noteListType, $noteListType = null){
 		break;
 
 		case 'trash':
+		$addNoteButton.hide();
+		$deleteAllTrashButton.show();
 		notesToDisplay = notes.filter(function(n){ return n.deleted == 1});
 		break;
 
@@ -558,15 +594,7 @@ function hideEmptyNote() {
 }
 
 function setNoteListTypeLabel(label){
-	// var newLabel = label;
-	// var faIcon = '';
-
-	// switch(label){
-		// case 'trash': break;
-		// default: newLabel += ' notes'; break;
-	// }
-
-	$('#note-list-label').html(label);
+	$noteListLabel.html(label);
 }
 
 function displayNoteToEditor(note){
@@ -642,6 +670,14 @@ function createNewNote(){
 	editor.focus()
 
 	selectSyntaxForCurrentNote(newNoteSyntax)
+}
+
+function deleteAllTrashNotes(){
+	if(confirm('Are you sure you want to permanently remove all deleted notes? This action cannot be undone.')) {
+		db.get('notes').remove({deleted: 1}).value()
+	} else {
+		return;
+	}
 }
 
 function deleteNote($noteElement){
@@ -751,12 +787,12 @@ ipcRenderer.on('toggleNoteList', function(event){
 });
 
 ipcRenderer.on('toggleEditor', function(event){
-	// $editor.toggle()
-	// editor.resize(true)
+	$editor.toggle()
+	editor.resize(true)
 
-	// db.get('notes').find({id:currentNote.id}).assign({
-	// 	'editor_enabled': $editor.is(":visible")
-	// }).value()
+	db.get('notes').find({id:currentNote.id}).assign({
+		'editor_enabled': $editor.is(":visible")
+	}).value()
 });
 
 ipcRenderer.on('nextNote', function(event){

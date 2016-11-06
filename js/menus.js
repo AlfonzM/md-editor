@@ -119,6 +119,9 @@ exports.menus = [
 	        { label: "Toggle Preview", accelerator: "CmdOrCtrl+P", click: function(){
 	            BrowserWindow.getFocusedWindow().webContents.send('togglePreview');
 	        }},
+	        { label: "Toggle Editor", accelerator: "CmdOrCtrl+Shift+P", click: function(){
+	            BrowserWindow.getFocusedWindow().webContents.send('toggleEditor');
+	        }},
 	        { label: "Toggle Sidebar", accelerator: "CmdOrCtrl+\\", click: function(){
 	            BrowserWindow.getFocusedWindow().webContents.send('toggleSidebar');
 	        }},
@@ -132,10 +135,7 @@ exports.menus = [
 	        { label: "Actual Size", accelerator: "CmdOrCtrl+0", role: 'resetzoom' },
 	        { label: "Zoom In", accelerator: "CmdOrCtrl+Shift+=", role: 'zoomin' },
 	        { label: "Zoom Out", accelerator: "CmdOrCtrl+-", role: 'zoomout' },
-	        { label: "Enter Full Screen", accelerator: 'Control+Command+F', role: 'togglefullscreen' },
-	        // { label: "Toggle Editor", accelerator: "CmdOrCtrl+Shift+P", click: function(){
-	        //     BrowserWindow.getFocusedWindow().webContents.send('toggleEditor');
-	        // }}
+	        { label: "Enter Full Screen", accelerator: 'Control+Command+F', role: 'togglefullscreen' }
 	    ]
 	},
     {

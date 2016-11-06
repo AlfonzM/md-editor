@@ -65,7 +65,8 @@ var setApplicationMenu = function () {
 };
 
 var setSelectedSyntax = function(index = 0){
-    applicationMenus.items[5].submenu.items[4].submenu.items[index].checked = true;
+    // applicationMenus.items[5].submenu.items[4].submenu.items[index].checked = true;
+    applicationMenus.items[5].submenu.items[5].submenu.items[index].checked = true;
 }
 
 
