@@ -55,9 +55,7 @@ $(document).ready(function (){
 	setBinds();
 
 	editor.getSession().on('changeScrollTop', function(scroll){
-		console.log((scroll+40) / $editor.height() * 100);
 		$preview.scrollTop(scroll);
-		// console.log(scroll + 40);
 	});
 
 	// hide by default the delete all button in the note list header
@@ -339,7 +337,6 @@ function refreshOutput(){
 }
 
 function saveNote(){
-	// console.log((editor.session.getScrollTop() + 40) + '/' + (editor.height));
 	$noteList.find('ul li.active').parent().prepend($noteList.find('ul li.active'));
 
 	currentNote.body = editor.getValue()
@@ -389,7 +386,6 @@ function changeTags(e){
 
 function selectTag(e){
 	// TODO
-	console.log('SELECT TAG: ' + $(e.target).text());
 }
 
 // SIDEBAR ----------------
@@ -465,6 +461,8 @@ function refreshTagsList() {
 
 	tags = _.sortBy(_.uniq(_.flatten(_.map(notes.filter(function(n){ return n.deleted == 0 }), 'tags'))))
 
+	console.log(tags)
+
 	tags.map(function(tag){
 		addTagToTagsList(tag);
 	})
@@ -476,8 +474,6 @@ function addTagToTagsList(tag){
 
 // SIDEBAR SYNTAX LIST -----------------
 function refreshSyntaxesList() {
-	// console.log('refresh syntaxes');
-
 	$('#sidebar ul.syntax-list').html('');
 
 	syntaxes = _.sortBy(_.uniq(_.map(notes.filter(function(n){ return n.deleted == 0 }), 'syntax')))
@@ -487,7 +483,7 @@ function refreshSyntaxesList() {
 	})
 }
 
-function selectSyntaxForCurrentNote(syntax){
+function setSyntaxForCurrentNote(syntax){
 	if(currentNote.syntax != syntax){
 		console.log('save')
 		db.get('notes').find({id:currentNote.id}).assign({
@@ -651,7 +647,7 @@ function createNewNote(){
 		'preview_enabled': true,
 	}
 
-	var newNoteSyntax = 'markdown'
+	console.log(currentNoteListType)
 
 	switch(currentNoteListType){
 		case 'favorites':
@@ -659,7 +655,14 @@ function createNewNote(){
 		break;
 
 		case 'syntax':
-		newNoteSyntax = $sidebar.find('ul.syntax-list li.note-list-type.active').attr('data-note-type-value');
+		var newNoteSyntax = $sidebar.find('ul.syntax-list li.note-list-type.active').attr('data-note-type-value');
+		newNote.syntax = newNoteSyntax
+		break;
+
+		case 'tag':
+		var tag = $sidebar.find('ul.tags-list li.note-list-type.active').text().trim()
+		newNote.tags.push(tag)
+		// addTagToCurrentNote(newNote.tag)
 		break;
 	}
 
@@ -668,13 +671,13 @@ function createNewNote(){
 	addNoteToNoteList(newNote)
 	selectANoteFromNoteList($noteList.find('ul li:first'))
 	editor.focus()
-
-	selectSyntaxForCurrentNote(newNoteSyntax)
 }
 
 function deleteAllTrashNotes(){
 	if(confirm('Are you sure you want to permanently remove all deleted notes? This action cannot be undone.')) {
 		db.get('notes').remove({deleted: 1}).value()
+		fetchNotesFromDB()
+		filterNoteListType(currentNoteListType)
 	} else {
 		return;
 	}
@@ -825,7 +828,7 @@ ipcRenderer.on('selectNoteListType', function(event, noteListType){
 });
 
 ipcRenderer.on('selectSyntax', function(event, syntax){
-	selectSyntaxForCurrentNote(syntax)
+	setSyntaxForCurrentNote(syntax)
 });
 
 // HELPER FUNCTIONS
